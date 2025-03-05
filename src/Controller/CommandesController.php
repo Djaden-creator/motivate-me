@@ -53,7 +53,8 @@ final class CommandesController extends AbstractController
             $entityManagerInterface->remove($commande);
             $entityManagerInterface->flush();
             return $this->redirectToRoute('app_commandes');
-        }       
+        }
+        return $this->redirectToRoute('app_commandes');
 
 }
 }
