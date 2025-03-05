@@ -1,0 +1,2 @@
+$('.replyonacomment').on('replytal',function(e){ e.preventDefault(); var formdata=$(this).serialize(); $.ajax({ url: $(this).attr('action'), type: $(this).attr('method'), data: formdata, success: function (response) { $('.replycomment')[0].reset(); //
+Reset form }, error:function(xhr,status,error){ console.log('error here djaden'); } }); });

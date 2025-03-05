@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Religion{% endblock %}
+
+{% block body %}
+    <section class="container">
+        <div class="row py-lg-3">
+          <div class="col-lg-6 col-md-8 mx-auto">
+            <h3>{{religion.name}}</h3>
+            <h1 style="font-size: 18px;" class="mb-2"><mark>"{{religion.brief}}"</mark> </h1>
+            <p class="text-center">
+                <img src="{{ asset(religion.Imagepath) }}" width="200px" height="200px" alt="" style="object-fit: cover;">
+              </p>
+            <p style="font-size: 17px;">
+                {{religion.description}}
+            </p>           
+            <p>
+                <a href="{{ path('app_blog') }}">Go back</a>
+            </p>
+          </div>
+        </div>
+      </section>
+{% endblock %}
+
+

@@ -1,0 +1,39 @@
+<main>
+		<div class="row p-4">
+			{% if replies  %}
+				{% for replie in replies %}
+					<div class="d-flex">
+						<div class="p-2">
+							<img src="{{asset('/' ~ replie.getpicture) }}" style="background: red; height:30px; width:30px; border-radius:15px;object-fit:cover">
+						</div>
+						<div class="p-2">
+							<small>{{ replie.getname }}
+								<small style="font-size: 10px;">
+								   {{ replie.created | date}}
+                </small>
+							</small>
+							<p>{{ replie.descriptionreply }}</p>
+							<div class="d-flex" style="column-gap: 15px;">
+								<a href="{{ path('app_likereply',{'id':replie.id}) }}" class="likereply" style="color:black;text-decoration:none">
+									{% if app.user and replie.isLikereplycommentbyUser(app.user) %}
+										<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+									{%  else %}
+										<i class="far fa-thumbs-up" aria-hidden="true"></i>
+									{%  endif %}
+									<span class="countreplylike">{{ replie.likeReplies | length }}</span>
+									{% if replie.likeReplies | length > 1 %}
+										<span class="countlabelreply">likes</span>
+									{% else %}
+										<span class="countlabelreply">like</span>
+									{% endif %}
+								</a>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			{% else %}
+				<span>no reply available</span>
+			{% endif %}
+
+		</div>
+</main>

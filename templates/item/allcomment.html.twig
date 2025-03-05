@@ -1,0 +1,40 @@
+<div class="d-flex">
+	<div class="p-2">
+		<img src="{{asset('/' ~ commentaires.getimagepath) }}" style="background: red; height:30px; width:30px; border-radius:15px;object-fit:cover">
+	</div>
+	<div class="p-2">
+		<small>{{ commentaires.getname }}-
+			<small style="font-size: 10px;">
+				{{ commentaires.createAt|ago }}
+			</small>
+		</small>
+		<p>{{ commentaires.description }}</p>
+		<div class="d-flex" style="column-gap: 15px;">
+			<a href="{{ path('app_commentlike',{'id':commentaires.id}) }}" class="commentcliker" style="color:black;text-decoration:none">
+				{% if app.user and commentaires.isLikecommentbyUser(app.user) %}
+					<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+				{%  else %}
+					<i class="far fa-thumbs-up" aria-hidden="true"></i>
+				{%  endif %}
+				<span class="countcommentlike">{{ commentaires.commentLikes | length }}</span>
+				{% if commentaires.commentLikes | length > 1 %}
+					<span class="countlabelcomment">likes</span>
+				{% else %}
+					<span class="countlabelcomment">like</span>
+				{% endif %}
+			</a>
+			<a href="{{ path('app_getreplyform',{'id':commentaires.id}) }}" class="commentdeux" style="color:black;text-decoration:none">REPLY</a>
+			<a href="{{ path('app_getreplies',{'id':commentaires.id}) }}" class="showreplies" style="color:black;text-decoration:none">show replies
+				{{commentaires.getReplyComments | length}} <i class="fa fa-arrow-down fa-sm" aria-hidden="true"></i>
+			</a>
+		</div>
+		{# here to show all error when we reply on a comment #}
+		<small class="text-danger madeit{{ commentaires.id}}"></small>
+		{# here to show all replies for a particular comment #}
+		{# here to show the form of reply a comment #}
+		<div class="mt-2 showformcomment{{ commentaires.id }}"></div>
+		{# here to show the rely comment #}
+
+		<div class="showreplies{{ commentaires.id }}"></div>
+	</div>
+</div>

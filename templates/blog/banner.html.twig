@@ -1,0 +1,50 @@
+<section class="text-center container">
+	<div class="row py-lg-3">
+		<h1 class="fw-light">Bienvenu sur Motivate me</h1>
+		<p class="lead text-body-secondary">notre plateforme vous offres des beaux articles basé sur la croyance de votre religion,nous vous motivons pour la gloire de Dieu le createur,d'autres articles sont gratuits et d'autre a vendre vous etes libre de faire votre choix,nous continuerons toujours a vous motiver selon votre croyance!</p>
+        <p>
+		 {% for religion in religions %}
+			
+				<div class="col-lg-3 col-md-12 mx-auto">
+					<div class="h-100 p-5 text-bg-dark rounded-3">
+						<img src="{{ asset(religion.Imagepath) }}" width="70" height="70" style="object-fit:cover;border-radius:35px;border:solid 2px white;" alt="Hollywood Sign on The Hill"/>
+					<h2>{{religion.name}}</h2>
+					<p>{{ religion.brief|u.truncate(50,'...')}} </p>
+					<a href="{{ path('app_getreligion',{'id': religion.id}) }}" class="btn btn-outline-light" >Lire la suite</a>
+					</div>
+				</div>
+           
+		
+		{% else %} 
+	<div class="row align-items-md-stretch">
+      <div class="col-md-6">
+        <div class="h-100 p-5 text-bg-dark rounded-3">
+          <h2>Aucune religion disponible</h2>
+          <p>Nous vous rappelons que ce site ne dispose aucune religion enregistrée pour le moment. nous excusons pour le désagrement et merci pour votre confiance. we are team God...</p>
+          <a href="{{ path('app_login') }}" class="btn btn-outline-light" >Log in</a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="h-100 p-5 bg-body-tertiary border rounded-3">
+          <h2>About</h2>
+          <p>Cette plateforme est faite pour rendre gloire a Dieu le créateur de toutes choses, clicquez sur le bouton dessus pour en savoir plus. we are team God...</p>
+          <a href="{{ path('app_about') }}" class="btn btn-outline-secondary"> à consulter</a>
+        </div>
+      </div>
+    </div>
+		{% endfor %}
+		{% if app.user %}
+		   <h1 class="fw-light p-3">
+			 <a class="btn btn-secondary" href="">Donate</a> 
+			 <a class="btn btn-danger" href="{{ path('app_logout')}}">Logout</a>
+		   </h1>
+		{% else %}
+			<h1 class="fw-light p-3">
+			  <a class="btn btn-secondary" href="{{ path('app_register')}}">Sign up</a> 
+			  <a class="btn btn-success" href="{{ path('app_login')}}">Login</a>
+		</h1>
+		{% endif %}
+		
+		
+	</div>
+</section>

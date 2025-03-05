@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+  <!-- ***** Header Area Start ***** -->
+  <header class="header-area header-sticky">
+      <div class="container">
+          <div class="row">
+              <div class="col-12">
+                  <nav class="main-nav">
+                      <!-- ***** Logo Start ***** -->
+                      <a href="{{ path('app_blog')}}" class="logo">
+                          Motivate Me
+                      </a>
+                      <!-- ***** Logo End ***** -->
+                      <!-- ***** Menu Start ***** -->
+                      <ul class="nav">
+                          <li class="scroll-to-section"><a href="{{ path('app_blog')}}" class="active">Home</a></li>
+                          <li><a href="meetings.html">About</a></li>
+                          <li class="scroll-to-section"><a href="">Donate</a></li>
+                          <li class="has-sub">
+                              <a href="javascript:void(0)">Be Partner</a>
+                              <ul class="sub-menu">
+                                  <li><a href="meetings.html">Abonnement</a></li>
+                                  <li><a href="meeting-details.html">Contact Us</a></li>
+                              </ul>
+                          </li>
+                          {% if not app.user %}
+                          <li class="scroll-to-section"><a href="{{ path('app_login')}}">Login</a></li> 
+                          <li class="scroll-to-section"><a href="{{ path('app_register')}}">Sign Up</a></li> 
+                          {% else %}
+                            <li class="scroll-to-section"><a href="">{{ app.user.username}}</a></li> 
+                            <li class="scroll-to-section"><a href="{{ path('app_logout')}}">Logout</a></li>
+                          {% endif %}
+                      </ul>        
+                      <a class='menu-trigger'>
+                          <span>Menu</span>
+                      </a>
+                      <!-- ***** Menu End ***** -->
+                  </nav>
+              </div>
+          </div>
+      </div>
+  </header>
+  <!-- 

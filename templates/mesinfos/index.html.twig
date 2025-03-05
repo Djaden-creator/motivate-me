@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MesinfosController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="container px-4 py-5" id="hanging-icons">
+    <h2 class="pb-2 border-bottom">Mes informations personnelles</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+      <div class="col d-flex align-items-start">
+        <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3 p-3">
+          <i class="fa-regular fa-user"></i>
+        </div>
+        <div>
+          <h3 class="fs-2 text-body-emphasis">your profil picture</h3>
+           <img src="{{ asset(app.user.imagepath) }} " style="height: 200px; width:200px;object-fit:contain" alt="">
+           <br>
+          <a href="{{ path('app_pictureupdate',{'id':users.id}) }} " class="btn btn-primary">
+            update picture
+          </a>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3 p-3">
+          <i class="fa-solid fa-book"></i>
+        </div>
+        <div>
+          <h3 class="fs-2 text-body-emphasis">My info</h3>
+          <p>Paragraph of text beneath thekeep going until we run out of words.</p>
+          <h6 class="">Username: {{users.username}} </h6>
+          <br>
+          <h6 class="">Religion: {{users.religion}} </h6>
+          <br>
+          <h6 class="">Gender: {{users.gender}} </h6>
+          <h6 class="">Email: {{users.email}} </h6>
+          <br>
+          <a href="{{ path('app_perso') }} " class="btn btn-primary">
+           update my info
+          </a>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <div class="icon-square text-body-emphasis bg-body-secondary d-inline-flex align-items-center justify-content-center fs-4 flex-shrink-0 me-3 p-3">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+        <div>
+          <h3 class="fs-2 text-body-emphasis">Mot de passe</h3>
+          <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+    
+          <a href="{{ path('app_pasword') }} " class="btn btn-primary">
+           Update my password
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block javascripts %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  {% endblock %}

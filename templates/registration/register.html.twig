@@ -1,0 +1,43 @@
+{% extends 'article.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+<main class="form-signin w-100 m-auto">
+{{ form_errors(registrationForm) }}
+{{ form_errors(registrationForm.plainPassword) }}
+{{ form_errors(registrationForm.email) }}
+ {{ form_start(registrationForm) }}
+ <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+      
+    <div class="form-floating">
+      {{ form_widget(registrationForm.email) }}
+      <label for="floatingInput">Email address</label>
+    </div>  
+     <div class="form-floating">
+      {{ form_widget(registrationForm.plainPassword) }}
+      <label for="floatingPassword">Password</label>
+    </div>
+    <small style="font-size:10px;">other information</small>
+    {{ form_errors(registrationForm.username) }}
+    <div class="form-floating">
+      {{ form_widget(registrationForm.gender) }}
+      <label for="floatingPassword">gender</label>
+    </div>
+    <small style="font-size:10px;">Username</small>
+     <div class="form-floating">
+      {{ form_widget(registrationForm.username) }}
+      <label for="floatingPassword">username</label>
+    </div>
+    <div class="form-check text-start my-3">
+      {{ form_widget(registrationForm.agreeTerms) }}
+      <label class="form-check-label" for="flexCheckDefault">
+        Remember me
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary w-100 py-2" type="submit">Sign in</button>
+    <a href="{{ path('app_login') }}" class="mt-5 mb-3 text-body-secondary">&copy; Avez vous deja un compte Login</p>
+    {{ form_end(registrationForm) }}
+    <a href="{{ path('app_blog') }}" class="text-dark">go to home</a>
+</main>
+{% endblock %}

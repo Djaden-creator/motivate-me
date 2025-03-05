@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}update article{% endblock %}
+
+{% block body %}
+<main class="form-signin w-100 m-auto">
+  {% for message in app.flashes %}
+    <span class="alert alert-success">
+        {{message.success}}
+    </span>
+  {% endfor %}
+ {{ form_start(newform) }}
+ <h1 class="h3 mb-3 fw-normal">Update article</h1>
+      {{ form_errors(newform.pictures) }}
+      {{ form_errors(newform.title) }}
+      {{ form_errors(newform.topic) }}
+    <div class="form-floating">
+      {{ form_widget(newform.title) }}
+      <label for="floatingInput">Title</label>
+    </div>
+    <br>  
+     <div class="form-floating">
+      {{ form_widget(newform.topic) }}
+      <label for="floatingPassword">topic</label>
+    </div>
+    <small style="font-size:10px;">other information</small>
+
+    <div class="form-floating">
+      {{ form_widget(newform.pictures) }}
+    </div>
+    <br>
+    <div class="form-floating">
+      {{ form_widget(newform.category) }}
+    </div>
+    <br>
+    <div class="form-floating">
+      {{ form_widget(newform.price) }}
+      <label for="floatingPassword">price</label>
+    </div>
+    <small style="font-size:10px;">status</small>
+    <div class="form-floating">
+      {{ form_widget(newform.status) }}
+      <label for="floatingPassword">status</label>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary w-100 py-2" type="submit">Update </button>
+    <a href="{{ path('app_blog') }}" class="mt-5 mb-3 text-body-secondary">&copy; Home</p>
+    {{ form_end(newform) }}
+</main>
+{% endblock %}
+
+

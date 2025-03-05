@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}create new seller number{% endblock %}
+
+{% block body %}
+<main class="form-signin w-100 m-auto">
+
+ {{ form_start(form) }}
+ <h1 class="h3 mb-3 fw-normal">create new seller number</h1>
+  
+     <div class="form-floating">
+      {{ form_widget(form.codenumber) }}
+      <label for="floatingPassword">code number</label>
+     </div>
+    <br>
+    {{ form_widget(form.save) }}
+{{ form_end(form) }}
+</main>
+{% endblock %}
+
+

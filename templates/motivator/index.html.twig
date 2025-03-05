@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}demande to become a motivator{% endblock %}
+
+{% block body %}
+<main class="form-signin w-100 m-auto">
+ {% if demandeform | length == 1 %}
+    <p class="alert alert-warning">
+        Nous validons une seule demande par account, votre demande est encours de traitement. supprimez la pour en faire une nouvelle      
+    </p>
+    <a  class="btn btn-danger" href="{{ path('app_profil') }}"> supprimer ma demande</a>
+ {% else %}
+    {{ form_start(newform) }}
+    <h3 class="mb-3 fw-light">faites votre demande de motivateur <strong>{{ app.user.username }}</strong></h3>
+         {{ form_errors(newform.picture) }}
+   
+       <small style="font-size:10px;">your title</small>
+       <div class="form-floating">
+         {{ form_widget(newform.leaderName) }}
+         <label for="floatingInput">your leader name</label>
+       </div>
+       <small style="font-size:10px;">your siret number</small>
+       <div class="form-floating">
+         {{ form_widget(newform.numeroSiret) }}
+         <label for="floatingInput">votre numero siret</label>
+       </div>
+       <small style="font-size:10px;">votre rang</small>
+        <div class="form-floating">
+         {{ form_widget(newform.titre) }}
+         <label for="floatingPassword">votre rang</label>
+       </div>
+       <small style="font-size:10px;">other information</small>
+       <div class="form-floating">
+         {{ form_widget(newform.etablissement) }}
+         <label for="floatingPassword">votre nom de l'eglise</label>
+       </div>
+       <br>
+       <div class="form-floating">
+         {{ form_widget(newform.religion) }}
+         <label for="floatingPassword">votre religion</label>
+       </div>
+       <small style="font-size:10px;">add your picture</small>
+       <div class="form-floating">
+         {{ form_widget(newform.picture) }}
+       </div>
+        <br>   
+        {{ form_widget(newform. save) }}
+       <a href="{{ path('app_blog') }}" class="mt-5 mb-3 text-body-secondary">&copy; Home</p>
+       {{ form_end(newform) }}
+ {% endif %}
+</main>
+{% endblock %}
+

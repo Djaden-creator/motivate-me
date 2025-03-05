@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Religion{% endblock %}
+
+{% block body %}
+<main class="form-signin w-100 m-auto">
+    {% for messages in app.flashes('success') %}
+        <div class="alert alert-success">
+          {{ messages }}
+        </div>
+      {% endfor %}
+ {{ form_start(religionform) }}
+ <h3 class="mb-3 fw-light">New religion <strong>{{ app.user.username }}</strong></h3>
+      {{ form_errors(religionform.picture) }}
+      {{ form_errors(religionform.name) }}
+      {{ form_errors(religionform.brief) }}
+    <small style="font-size:10px;">Religion</small>
+    <div class="form-floating">
+      {{ form_widget(religionform.name) }}
+      <label for="floatingInput">Religion</label>
+    </div>
+    <small style="font-size:10px;">Briefing</small>
+     <div class="form-floating">
+      {{ form_widget(religionform.brief) }}
+      <label for="floatingPassword">briefing</label>
+    </div>
+    <small style="font-size:10px;">other information</small>
+    <div class="form-floating">
+      {{ form_widget(religionform.description) }}
+      <label for="floatingPassword">description</label>
+    </div>
+    <small style="font-size:10px;">picture</small>
+    <div class="form-floating">
+      {{ form_widget(religionform.picture) }}
+    </div>
+    
+     <br>
+    <button type="submit" class="btn btn-primary w-100 py-2" type="submit">add religion</button>
+    <a href="{{ path('app_blog') }}" class="mt-5 mb-3 text-body-secondary">&copy; Home</p>
+    {{ form_end(religionform) }}
+</main>
+{% endblock %}
+
+

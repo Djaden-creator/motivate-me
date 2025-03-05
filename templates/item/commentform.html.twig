@@ -1,0 +1,18 @@
+{{ form_start(form,{
+		attr: { 
+			'novalidate': 'novalidate',
+			'class': 'formhere', 
+			} 
+        }) 
+	}}
+	
+	<div class="mb-1">
+		<label for="exampleInputEmail1" class="form-label">Add comment</label>
+		<div>
+			<strong class="text-danger cope" style="font-size: 14px;"></strong>
+		</div> 	
+		{{ form_widget(form.description) }}
+		<button type="submit" class="btn btn-primary mt-2 commentnow">comment</button>
+	</div>
+    {{ form_errors(form.description) }}	
+{{ form_end(form) }}	

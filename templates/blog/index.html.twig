@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+	{% if app.user %}
+	{% if app.user.religion == 'none' %}
+		{{ include('setyour_religion/index.html.twig') }}
+	{% else %}
+	 {# the view here  #}
+	 <main>
+	 {{ include('blog/banner.html.twig')}}
+     {{ include('blog/body.html.twig')}}
+       
+    </main>
+	{% endif %}
+	{% else %}
+
+		<main>
+		{{ include('blog/banner.html.twig')}}
+		{{ include('blog/body.html.twig')}}
+		  
+	   </main>
+	<!-- ***** Main Banner Area End ***** -->   
+	
+	{% endif %}
+
+	{{ include('blog/footer.html.twig')}}
+	<!-- Scripts -->
+{% endblock %}
+{% block javascripts %} 
+	 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+	<!-- Bootstrap core JavaScript -->
+	 
+	<script> 
+		$(document).on('click','.allclicks',function(event){
+			event.preventDefault();
+
+			const url= this.href;
+			const spancount=this.querySelector('span.countlike');
+			const spanlabel=this.querySelector('span.countlabel');
+			const icone=this.querySelector('i');
+			
+			
+		   axios.get(url).then(function(response){
+			spancount.textContent=response.data.articlelike;
+			
+			if(icone.classList.contains('fas')){
+			  icone.classList.replace('fas','far');
+			}
+			else{
+			  icone.classList.replace('far','fas');
+			}
+			
+		   }).catch(function(error){
+			if(error.response.status !== 403){
+			  console.log("something went wrong");
+			}
+			else{
+			  window.alert("connecte toi avant de liker un poste");
+			}
+		   });
+		 })
+
+		 //this code is used to save the article and to unsave the article
+		 $(document).on('click','.sauvegarder',function(event){
+			event.preventDefault();
+
+			const url= this.href;
+			const savecount=this.querySelector('span.countsave');
+			const spanlabel=this.querySelector('span.countlabel');
+			const icone=this.querySelector('i');
+			
+			
+		   axios.get(url).then(function(response){
+			savecount.textContent=response.data.savedarticle;
+			
+			if(icone.classList.contains('fas')){
+			  icone.classList.replace('fas','far');
+			}
+			else{
+			  icone.classList.replace('far','fas');
+			}
+			
+		   }).catch(function(error){
+			if(error.response.status !== 403){
+			  console.log("something went wrong");
+			}
+			else{
+			  window.alert("connecte toi avant de liker un poste");
+			}
+		   });
+		 })
+	</script>
+{% endblock %}

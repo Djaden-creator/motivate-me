@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CommandesController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+<div class="container">
+    <div class="my-3 p-3 bg-body rounded shadow-sm">
+        <h6 class="border-bottom pb-2 mb-0">Mes Commandes ({{commandes | length }})  
+        {% for commande in commandes %}
+         
+        <div class="d-flex text-body-secondary pt-3">
+          <a href="{{ path('app_item',{'id':commande.article.id})}}">
+            <img src="{{ asset(commande.article.Imagepath) }}" alt="" width="64" height="64" style="border-radius: 5px;object-fit:cover">&nbsp;
+          </a>
+         
+          <p class="pb-3 mb-0 small lh-sm border-bottom">
+            <strong class="d-block text-gray-dark"><b>Religion</b> : {{commande.article.category}}</strong>
+            <strong class="d-block text-gray-dark"><b>article acheté</b> :il y'a  {{commande.dateofbuy | ago}}</strong>
+            <b>titre</b> : {{commande.article.title}},&nbsp;&nbsp;
+            <b>prix</b> :  {{commande.article.price}} {{device}},&nbsp;&nbsp;
+            <b>quantity</b> :  1
+            <strong class="d-block text-gray-dark"><a href="{{ path('app_delete_allcommande',{'id':commande.id}) }}">effacer cette commande</a></strong>
+          </p>
+         <p>
+         </p>
+        </div>
+        {% else %}
+          <div class="d-flex text-body-secondary pt-3">
+          
+          <p class="pb-3 mb-0 small lh-sm border-bottom">
+            
+            Vous n'avez aucune commande pour l'instant
+          </p>
+        </div>
+        {% endfor %}
+       
+        <small class="d-block text-end mt-3">
+          <a href="#">All updates</a>
+        </small>
+    </div>
+</div>
+
+{% endblock %}

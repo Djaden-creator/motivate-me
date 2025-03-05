@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello my publication controller
+{% endblock %}
+
+{% block body %}
+	<div class="container px-4 py-5" id="custom-cards">
+
+		<h2 class="pb-2 border-bottom d-flex">
+			<img src="{{users.Imagepath}}" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 1px black;object-fit:cover">
+			<span style="margin-top:1px; margin-left:5px;">{{app.user.username}}
+				<span class="lead text-body-secondary">({{app.user.religion}})</span>
+			</span>
+		</h2>
+		<small class="lead text-body-secondary">
+			<strong>Mes Archives ({{ sauvegardearticles|length }})</strong>
+		</small>
+		<div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
+			{% for sauvegardearticle in sauvegardearticles %}
+				<div class="col">
+					<div class="card shadow-sm">
+						{% if sauvegardearticle.article.status == 'free' %}
+							<a href="{{ path('app_item',{'id':sauvegardearticle.article.id})}}"><img src="{{ asset(sauvegardearticle.article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
+						{% else %}
+							<img src="{{ asset(sauvegardearticle.article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover">
+						{% endif %}
+						<div class="card-body">
+							{% if sauvegardearticle.article.status == 'free' %}
+								<strong class="text-success">Gratuit</strong>
+							{% else %}
+								<strong>{{ sauvegardearticle.article.price}}
+									Eur</strong>
+							{% endif %}
+							<p class="card-text" style="font-size: 15px;">{{ sauvegardearticle.article.title|u.truncate(50,'...') }}</p>
+							<div class="d-flex justify-content-between align-items-center">
+								<div class="btn-group">
+									{% if app.user == sauvegardearticle.article.userposter %}
+										<a href="{{ path('app_update',{'id':sauvegardearticle.article.id})}}" class="btn btn-sm btn-outline-secondary">
+											<i class="fa fa-pencil" aria-hidden="true"></i>
+										</a>
+										<a href="{{ path('app_delete',{'id':sauvegardearticle.article.id}) }}" class="btn btn-sm btn-outline-secondary">
+											<i class="fa fa-trash" aria-hidden="true"></i>
+										</a>
+
+									{% endif %}
+
+									{% if sauvegardearticle.article.status == 'free' %}
+										{% if app.user %}
+											<a href="{{ path('app_item',{'id':sauvegardearticle.article.id}) }}" class="btn btn-sm btn-outline-secondary">read</a>
+										{% else %}
+											<a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-secondary">read</a>
+										{% endif %}
+
+									{% else %}
+										{% if app.user %}
+											<a href="{{ path('app_article_cart',{id:sauvegardearticle.article.id}) }}" class="btn btn-sm btn-warning">Ajouter</a>
+										{% else %}
+											<a href="{{ path('app_login') }}" class="btn btn-sm btn-warning">Ajouter</a>
+										{% endif %}
+									{% endif %}
+								</div>
+								<div class="btn-group">
+									<small class="parent-show{{ sauvegardearticle.article.id }}"></small>
+									<a href="{{ path('likeitem',{'id':sauvegardearticle.article.id}) }}" class="allclicks" style="color:black;text-decoration:none">
+										{% if app.user and sauvegardearticle.article.IslikeByUser(app.user) %}
+											<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+										{% else %}
+											<i class="far fa-thumbs-up" aria-hidden="true"></i>
+										{% endif %}
+										<span class="countlike">{{ sauvegardearticle.article.articlelikes | length }}</span>
+									</a>&nbsp;&nbsp;
+									<span>
+										<i class="fa fa-message"></i>
+										{{ sauvegardearticle.article.getComment|length }}
+									</span>&nbsp;&nbsp;
+									<span>
+										<a href="{{ path('app_sauvegard',{'id':sauvegardearticle.article.id}) }}" class="sauvegarder"  style="color:black;text-decoration:none">
+										{% if app.user and sauvegardearticle.article.IsSavedByUser(app.user) %}
+											<i class="fas fa-bookmark"></i>
+										{% else %}
+											<i class="far fa-bookmark"></i>
+										{% endif %}    
+										<span class="countsave">{{ sauvegardearticle.article.sauvegardes | length }}</span>	
+										</a>																
+									</span>
+								</div>
+								<small class="text-body-secondary">{{ sauvegardearticle.article.createAt | ago }}</small>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			{% endfor %}
+		</div>
+	</div>
+	{{ include('blog/footer.html.twig')}}
+{% endblock %}
+{% block javascripts %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+    
+	
+	 {# here javascript for liking and saving #}
+	
+	 <script> 
+		$(document).on('click','.allclicks',function(event){
+			event.preventDefault();
+
+			const url= this.href;
+			const spancount=this.querySelector('span.countlike');
+			const spanlabel=this.querySelector('span.countlabel');
+			const icone=this.querySelector('i');
+			
+			
+		   axios.get(url).then(function(response){
+			spancount.textContent=response.data.articlelike;
+			
+			if(icone.classList.contains('fas')){
+			  icone.classList.replace('fas','far');
+			}
+			else{
+			  icone.classList.replace('far','fas');
+			}
+			
+		   }).catch(function(error){
+			if(error.response.status !== 403){
+			  console.log("something went wrong");
+			}
+			else{
+			  window.alert("connecte toi avant de liker un poste");
+			}
+		   });
+		 })
+
+		 //this code is used to save the article and to unsave the article
+		 $(document).on('click','.sauvegarder',function(event){
+			event.preventDefault();
+
+			const url= this.href;
+			const savecount=this.querySelector('span.countsave');
+			const spanlabel=this.querySelector('span.countlabel');
+			const icone=this.querySelector('i');
+			
+			
+		   axios.get(url).then(function(response){
+			savecount.textContent=response.data.savedarticle;
+			
+			if(icone.classList.contains('fas')){
+			  icone.classList.replace('fas','far');
+			}
+			else{
+			  icone.classList.replace('far','fas');
+			}
+			
+		   }).catch(function(error){
+			if(error.response.status !== 403){
+			  console.log("something went wrong");
+			}
+			else{
+			  window.alert("connecte toi avant de liker un poste");
+			}
+		   });
+		 })
+	</script>
+	<!-- Bootstrap core JavaScript -->
+{% endblock %}

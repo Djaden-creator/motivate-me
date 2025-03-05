@@ -1,0 +1,411 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BlogController!
+{% endblock %}
+
+{% block body %}
+	<main>
+
+		<div class="container py-4">
+			<div class="row">
+				<div class="col-md-8">
+					<div class="p-1 mb-4  rounded-3">
+						{% if articlesbyids %}
+							<div class="container-fluid">
+								<div style="justify-content:center;align-content:center;text-align:center; height:80px;background-color:black;position:absolute;margin-left:20px;margin-top:-20px; padding:5px;">
+									<h6 style="color: white;">
+										<b>{{ articlesbyids.createAt | date('F') }}</b>
+									</h6>
+									<span style="color: white;font-size:30px;">
+										<b>{{ articlesbyids.createAt | date('j') }}</b>
+									</span>
+								</div>
+								<img src="{{ asset(articlesbyids.Imagepath) }}" height="100%" width="100%" style="border-radius: 5px;" alt="">
+								<h1 class="fw-bold mb-3 p-2" style="font-size: 25px;">{{ articlesbyids.title }}</h1>
+								<p class="col-md-12 p-1">{{ articlesbyids.topic }}</p>
+								<p class="col-md-8 sizepool p-1">{{ articlesbyids.createAt | date('l') }}
+									le
+									{{ articlesbyids.createAt | date('j F Y') }}
+									à
+									{{ articlesbyids.createAt | date('H:i') }}
+								</p>
+								<a href="{{ path('likeitem',{'id':articlesbyids.id}) }}" class="allclicks p-1" style="color:black;text-decoration:none">
+									{% if app.user and articlesbyids.IslikeByUser(app.user) %}
+										<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+									{%  else %}
+										<i class="far fa-thumbs-up" aria-hidden="true"></i>
+									{%  endif %}
+									<span class="countlike">{{ articlesbyids.articlelikes | length }}</span>
+									{% if articlesbyids.articlelikes | length > 1 %}
+										<span class="countlabel">likes</span>
+									{% else %}
+										<span class="countlabel">like</span>
+									{% endif %}
+
+								</a>
+								<small class="countmessage">
+									|
+									{{ articlesbyids.getComment|length }}
+									{% if articlesbyids.getComment|length > 1  %}
+										Comments
+									{% else %}
+										Comment
+									{% endif %}
+								</small>
+							</div>
+
+						{% else %}
+							<div class="container-fluid py-5">
+								<p class="col-md-8 fs-4">no data fund for this id</p>
+							</div>
+						{% endif %}
+					</div>
+					{% if app.user %}
+						<div class="p-3 checkform" style="margin-top: -25px;">
+							{{ include('item/commentform.html.twig')}}
+						</div>
+					{% else %}
+						<div class="mb-3">
+							<a class=" btn btn-bd-primary" href="{{ path('app_login')}}">
+								Login to Comment</a>
+						</div>
+					{% endif %}
+
+					{# template of all comment here #}
+					<div class="row p-2 fetchallcomment">
+						{% if commentaireall  %}
+							{% for commentaires in commentaireall %}
+								{{ include('item/allcomment.html.twig')}}
+							{% endfor %}
+						{% else %}
+							<span class="nocomment">no comment available</span>
+						{% endif %}
+					</div>
+					{# end of template #}
+				</div>
+
+				<div class="col-md-4 p-2">
+					<h5 class="fw-light">
+						<b>{{ articles| length }}</b>
+						articles funds for
+						<strong>
+							<u>{{ app.user.religion }}</u>
+						</strong>
+					</h5>
+					{% for article in articles %}
+						<div class="col">
+							<div class="card shadow-sm">
+								{% if article.status == 'free' %}
+									<a href="{{ path('app_item',{'id':article.id})}}"><img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
+								{% else %}
+									<img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover">
+								{% endif %}
+								<div class="card-body">
+									{% if article.status == 'free' %}
+										<strong class="text-success">0 Eur
+											<small class="text-success">Gratuit</small>
+										</strong>
+									{% else %}
+										<strong>{{ article.price}}
+											Eur
+											<small class="text-info">Payant</small>
+										</strong>
+									{% endif %}
+									<p class="card-text" style="font-size: 15px;">{{ article.title|u.truncate(50,'...') }}</p>
+									<div class="d-flex justify-content-between align-items-center">
+										<div
+											class="btn-group">
+											{#  when the user is connected login #}
+											{% if app.user %}
+												{% if article.status == 'payable' %}
+													<a href="{{ path('app_article_cart',{id:articlesbyids.id}) }}" class="btn btn-sm btn-warning">Ajouter</a>
+												{% else %}
+													<a href="{{ path('app_item',{'id':article.id})}}" class="btn btn-sm btn-outline-secondary">read</a>
+												{% endif %}
+												{# when the user is not log in   #}
+											{% else %}
+												{% if article.status == 'payable' %}
+													<a href="{{ path('app_login') }}" class="btn btn-sm btn-warning">Ajouter</a>
+												{% else %}
+													<a href="{{ path('app_item',{'id':article.id})}}" class="btn btn-sm btn-outline-secondary">read</a>
+												{% endif %}
+											{% endif %}
+										</div>
+										<div class="btn-group">
+											<small class="parent-show{{ article.id }}"></small>
+											<a href="{{ path('likeitem',{'id':article.id}) }}" class="allclicks" style="color:black;text-decoration:none">
+												{% if app.user and article.IslikeByUser(app.user) %}
+													<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+												{% else %}
+													<i class="far fa-thumbs-up" aria-hidden="true"></i>
+												{% endif %}
+												<span class="countlike">{{ article.articlelikes | length }}</span>
+											</a>&nbsp;&nbsp;
+											<span>
+												{% if article.getComment|length > 1  %}
+													Comments
+													{{ article.getComment|length }}
+												{% else %}
+													Comment
+													{{ article.getComment|length }}
+												{% endif %}
+											</span>
+										</div>
+										<small class="text-body-secondary">{{ article.createAt | ago }}</small>
+									</div>
+								</div>
+							</div>
+						</div>
+						<br>
+					{%  endfor %}
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+				<div class="col-md-4 d-flex align-items-center">
+					<a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+						<svg class="bi" width="30" height="24">
+							<use xlink:href="#bootstrap"></use>
+						</svg>
+					</a>
+					<span class="mb-3 mb-md-0 text-body-secondary">© 2024 Company, Inc</span>
+				</div>
+
+				<ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+					<li class="ms-3">
+						<a class="text-body-secondary" href="#">
+							<svg class="bi" width="24" height="24">
+								<use xlink:href="#twitter"></use>
+							</svg>
+						</a>
+					</li>
+					<li class="ms-3">
+						<a class="text-body-secondary" href="#">
+							<svg class="bi" width="24" height="24">
+								<use xlink:href="#instagram"></use>
+							</svg>
+						</a>
+					</li>
+					<li class="ms-3">
+						<a class="text-body-secondary" href="#">
+							<svg class="bi" width="24" height="24">
+								<use xlink:href="#facebook"></use>
+							</svg>
+						</a>
+					</li>
+				</ul>
+			</footer>
+		</div>
+	</main>
+{% endblock %}
+{% block javascripts %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+	 <script> 
+		    $(document).ready(function(){
+				//here to like a comment
+		        $(document).on('click','.commentcliker',function(event){
+					event.preventDefault();
+		
+		              const url= this.href;
+		              const spancountcomment=this.querySelector('span.countcommentlike');
+		              const spanlabelcomment=this.querySelector('span.countlabelcomment');
+		              const iconecommentlike=this.querySelector('i');
+		              
+		              
+		             axios.get(url).then(function(response){
+						spancountcomment.textContent=response.data.commentlike;
+						if(response.data.commentlike > 1){
+							spanlabelcomment.textContent="likes";
+						}else{
+							spanlabelcomment.textContent="like";
+						}
+						if(iconecommentlike.classList.contains('fas')){
+						  iconecommentlike.classList.replace('fas','far');
+						}
+						else{
+						  iconecommentlike.classList.replace('far','fas');
+						}
+		
+					 }).catch(function(error){
+		              if(error.response.status !== 403){
+		                console.log("something went wrong");
+		              }
+		              else{
+		                window.alert("connecte toi avant de liker un commentaire");
+		              }
+		             });
+		        })
+		        
+				// ici pour liker un article
+				$(document).on('click','.allclicks',function(event){
+					event.preventDefault();
+		
+					const url= this.href;
+					const spancount=this.querySelector('span.countlike');
+					const spanlabel=this.querySelector('span.countlabel');
+					const icone=this.querySelector('i');
+					
+					
+				   axios.get(url).then(function(response){
+					spancount.textContent=response.data.articlelike;
+					if(response.data.articlelike > 1){
+					  spanlabel.textContent="likes";
+					}else{
+					  spanlabel.textContent="like";
+					}
+					if(icone.classList.contains('fas')){
+					  icone.classList.replace('fas','far');
+					}
+					else{
+					  icone.classList.replace('far','fas');
+					}
+					
+				   }).catch(function(error){
+					if(error.response.status !== 403){
+					  console.log("something went wrong");
+					}
+					else{
+					  window.alert("connecte toi avant de liker un poste");
+					}
+				   });
+			    });
+
+				//here to like a reply comment
+				$(document).on('click','.likereply',function(event){
+					event.preventDefault();
+		
+					const url= this.href;
+					const spancountreplylike=this.querySelector('span.countreplylike');
+					const spanlabelreplylike=this.querySelector('span.countlabelreply');
+					const iconereplylike=this.querySelector('i');
+					
+					
+				   axios.get(url).then(function(response){
+					spancountreplylike.textContent=response.data.replylike;
+					if(response.data.replylike > 1){
+					  spanlabelreplylike.textContent="likes";
+					}else{
+					  spanlabelreplylike.textContent="like";
+					}
+					if(iconereplylike.classList.contains('fas')){
+					  iconereplylike.classList.replace('fas','far');
+					}
+					else{
+					  iconereplylike.classList.replace('far','fas');
+					}
+					
+				   }).catch(function(error){
+					if(error.response.status !== 403){
+					  console.log("something went wrong");
+					}
+					else{
+					  window.alert("connecte toi avant de liker un poste");
+					}
+				   });
+				 })
+				
+				//here is to submit a comment on a post and fetch the comment directly
+				$('.formhere').on('submit', function (e) {
+	                e.preventDefault();
+					var $form=$(e.currentTarget);
+						$.ajax({
+							url: $(this).attr('action'),
+							type: 'POST',
+							data: $(this).serialize(),
+							success: function (data) {
+								$('.fetchallcomment').html(data);
+								$('.nocomment').hide();
+								$('.cope').hide();
+								$('.formhere')[0].reset(); // Reset form
+							},
+							error: function (xhr) {
+								let data=xhr.responseJSON;
+								if(data.status==='error'){
+									$('.cope').html(data.errors.join('<br>')).show();
+								}
+								
+							}
+						});
+	                    
+	            });
+	
+					// here is to show a form of comment a comment on the article
+				$(document).on('click','.commentdeux',function(event){
+	                event.preventDefault();
+					// url that we want to use
+					let urls=this.href;
+				    // this function is to extract the id from  the urls
+					function getidfromurl(urls){
+						let segment =urls.split("/");
+						return segment.pop() || segment.pop();
+					}
+					// and here is the id extracted from the urls
+					let id=getidfromurl(urls);
+					$.ajax({
+						url:urls,
+						type:'POST',
+						data:$(this).serialize(),
+						success:function(data)
+						{
+							$('.showformcomment' + id).html(data);
+						}
+					})			
+	            });
+	
+	            // here is to submit a reply on a comment
+				$(document).on('click','.replycomment',function(event){
+					//for preventing the form refresh i added the submit and class of form controlreply	
+					event.preventDefault();
+					var idcomment=$(this).val();
+					var descriptionreply=$('#description' +idcomment).val();
+					var userid=$('#userid').val();
+					$.ajax({
+	                   type: "POST",
+	                   url: "/replycommentform",
+	                   data: {
+	                       idcomment: idcomment,
+						   descriptionreply:descriptionreply,
+						   userid:userid,
+	                       reply: true
+	                },
+	                success: function(response) {
+						$('.formreset' + idcomment)[0].reset();
+						$('.showreplies' + idcomment).html(response);	
+	                  }
+	                });
+				})
+
+				//here is to close the reply form
+				$(document).on('click','.close',function(event){
+					event.preventDefault();
+					var idcomment=$(this).val();
+					$('.showformcomment' + idcomment).html('');
+				});
+
+
+				// here is to get all replies for a aparticular comment				
+				$(document).on('click','.showreplies',function(event){
+					event.preventDefault();
+					// url that we want to use
+					let urls=this.href;
+				    // this function is to extract the id from  the urls
+					function getidfromurl(urls){
+						let segment =urls.split("/");
+						return segment.pop() || segment.pop();
+					}
+					// and here is the id extracted from the urls
+					let id=getidfromurl(urls);
+					$.ajax({
+	                   type: "POST",
+	                   url: urls,
+					   data:$(this).serialize(),
+	                success: function(response) {
+	                    $('.showreplies' + id).html(response);	
+	                  }
+	                });
+				});
+		    });
+		</script>
+{% endblock %}

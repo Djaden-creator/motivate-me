@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello abonnement {% endblock %}
+
+{% block body %}
+    
+    <div class="container py-3">
+        <main>
+          <div class="">
+              {% if app.user %}
+                  <h1 class="fw-light">{{ app.user.username}},abonnement encours <strong>weeky lighter</strong> </h1>
+                  <p class="lead text-body-secondary">montant:<strong>25 Eur</strong>  par mois</p>
+                  <p class="lead text-body-secondary">subscription fait : le 24 mai 2025</p>
+                  <p class="lead text-body-secondary">expiration: le 24 june 2025</p>
+                  <a href="" class="btn btn-danger" >Annuler l'abonnement encours</a>
+              {% else %}
+                <h1 style="font-size: 45px;">Nos services d'abonnement</h1>
+              {% endif %}
+              
+          </div>
+          <br>
+          {% if app.user %}
+            <h1 style="font-size: 20px;">Nos differentes offres d'abonnement</h1>
+          {% endif %}         
+          <div class="row row-cols-1 row-cols-md-3 py-3 text-center">
+            {% for subscription in subscriptions %}
+            <div class="col">
+              <div class="card mb-4 rounded-3 shadow-sm">
+                {% if subscription.name =='Weeky tester' %}
+                    <div class="card-header py-3">
+                  <h4 class="my-0 fw-normal">{{subscription.name}}</h4>
+                </div>
+                   {% elseif subscription.name =='Weeky lighter' %}
+                    <div class="card-header bg-info py-3">
+                        <h4 class="my-0 fw-normal">{{subscription.name}}</h4>
+                      </div>
+                        {% else %}
+                            <div class="card-header bg-primary py-3">
+                                <h4 class="my-0 fw-normal">{{subscription.name}}</h4>
+                              </div>
+                          {% endif %}
+                
+                <div class="card-body">
+                  <h1 class="card-title pricing-card-title">${{subscription.price}}
+                    <small class="text-body-secondary fw-light">
+                       {% if subscription.name =='Weeky tester' %}
+                        Weekly
+                       {% elseif subscription.name =='Weeky lighter' %}
+                        Monthly
+                            {% else %}
+                                Yearly
+                              {% endif %}
+                    </small></h1>
+                  <ul class="list-unstyled mt-3 mb-4">
+                    <li>{{subscription.description}}</li>
+                  </ul>
+                  {% if app.user %}
+                    {% if subscription.name =='Weeky tester' %}
+                      <a href="{{ path('app_subscription',{'id':subscription.id})}}" class="w-100 btn btn-lg btn-outline-primary">Give it a try</a>
+                     {% elseif subscription.name =='Weeky lighter' %}
+                      <a href="{{ path('app_subscription',{'id':subscription.id})}}" class="w-100 btn btn-lg btn-info">Go for it</a>
+                          {% else %}
+                              <a href="{{ path('app_subscription',{'id':subscription.id})}}" class="w-100 btn btn-lg btn-primary">Unstoppable </a>
+                            {% endif %}
+
+                  {% else %}
+                    {% if subscription.name =='Weeky tester' %}
+                      <a href="{{ path('app_login')}}" class="w-100 btn btn-lg btn-outline-primary">Give it a try</a>
+                     {% elseif subscription.name =='Weeky lighter' %}
+                      <a href="{{ path('app_login')}}" class="w-100 btn btn-lg btn-info">Go for it</a>
+                          {% else %}
+                              <a href="{{path('app_login') }}" class="w-100 btn btn-lg btn-primary">Unstoppable </a>
+                            {% endif %}
+                              
+                  {% endif %}
+                  
+                  
+                 
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          
+        </main>      
+        {{ include('blog/footer.html.twig')}}
+      </div>
+{% endblock %}
+{% block javascripts %} 
+	 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+	<!-- Bootstrap core JavaScript -->
+{% endblock %}
+
+

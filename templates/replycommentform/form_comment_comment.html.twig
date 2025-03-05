@@ -1,0 +1,11 @@
+<form class="formreset{{ id }}" action="" method="">
+	<textarea class="form-control" id="description{{ id}}"></textarea>
+	<input type="hidden" id="userid" value="{{ app.user.id }}">
+	<div class="d-flex">
+		<button class="btn btn-bd-primary mt-1 replycomment" value="{{id }}">Reply</button>&nbsp;
+		<button class="btn btn-danger mt-1 close" value="{{id }}">close</button>
+	</div>
+</form>
+{# here to show all error when we reply on a comment #}
+<small class="text-danger madeit{{ id }}"></small>
+{# here to show all replies for a particular comment #}

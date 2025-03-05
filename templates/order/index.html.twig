@@ -1,0 +1,232 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello OrderController!
+{% endblock %}
+
+{% block body %}
+	<style>
+		.bd-placeholder-img {
+			font-size: 1.125rem;
+			text-anchor: middle;
+			-webkit-user-select: none;
+			-moz-user-select: none;
+			user-select: none;
+		}
+		@media(min-width: 768px) {
+			.bd-placeholder-img-lg {
+				font-size: 3.5rem;
+			}
+		}
+		.b-example-divider {
+			width: 100%;
+			height: 3rem;
+			background-color: rgba(0, 0, 0, 0.1);
+			border: solid rgba(0, 0, 0, 0.15);
+			border-width: 1px 0;
+			box-shadow: inset 0 0.5em 1.5em rgba(0, 0, 0, 0.1), inset 0 0.125em 0.5em rgba(0, 0, 0, 0.15);
+		}
+
+		.b-example-vr {
+			flex-shrink: 0;
+			width: 1.5rem;
+			height: 100vh;
+		}
+
+		.bi {
+			vertical-align: -0.125em;
+			fill: currentColor;
+		}
+
+		.nav-scroller {
+			position: relative;
+			z-index: 2;
+			height: 2.75rem;
+			overflow-y: hidden;
+		}
+
+		.nav-scroller .nav {
+			display: flex;
+			flex-wrap: nowrap;
+			padding-bottom: 1rem;
+			margin-top: -1px;
+			overflow-x: auto;
+			text-align: center;
+			white-space: nowrap;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.btn-bd-primary {
+			--bd-violet-bg: #712cf9;
+			--bd-violet-rgb: 112.520718, 44.062154, 249.437846;
+
+			--bs-btn-font-weight: 600;
+			--bs-btn-color: var(--bs-white);
+			--bs-btn-bg: var(--bd-violet-bg);
+			--bs-btn-border-color: var(--bd-violet-bg);
+			--bs-btn-hover-color: var(--bs-white);
+			--bs-btn-hover-bg: #6528e0;
+			--bs-btn-hover-border-color: #6528e0;
+			--bs-btn-focus-shadow-rgb: var(--bd-violet-rgb);
+			--bs-btn-active-color: var(--bs-btn-hover-color);
+			--bs-btn-active-bg: #5a23c8;
+			--bs-btn-active-border-color: #5a23c8;
+		}
+
+		.bd-mode-toggle {
+			z-index: 1500;
+		}
+
+		.bd-mode-toggle .dropdown-menu .active .bi {
+			display: block !important;
+		}
+	</style>
+	{{ parent() }}
+
+ {% block javascripts %}
+	<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.payment/3.0.0/jquery.payment.min.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			Stripe.setPublishableKey('{{ public_key }}');
+			var $form = $('.js-checkout-form');
+			$form.find('.js-cc-number').payment('formatCardNumber');
+			$form.find('.js-cc-exp').payment('formatCardExpiry');
+			$form.find('.js-cc-cvc').payment('formatCardCVC');
+			$form.submit(function (event) {
+				event.preventDefault();
+				// Disable the submit button to prevent repeated clicks:
+				$form.find('.js-submit-button').prop('disabled', true);
+				// Request a token from Stripe:
+				Stripe.card.createToken($form, stripeResponseHandler);
+			});
+		});
+		function stripeResponseHandler(status, response) {
+			// Grab the form:
+			var $form = $('.js-checkout-form');
+			if (response.error) { // Problem!
+				// Show the errors on the form:
+				$form.find('.js-checkout-error')
+					.text(response.error.message)
+					.removeClass('hidden');
+				$form.find('.js-submit-button').prop('disabled', false); // Re-enable submission
+			} else { // Token was created!
+				$form.find('.js-checkout-error')
+					.addClass('hidden');
+				// Get the token ID:
+				var token = response.id;
+				// Insert the token ID into the form so it gets submitted to the server:
+				$form.append($('<input type="hidden" name="stripeToken">').val(token));
+				// Submit the form:
+				$form.get(0).submit();
+			}
+		}
+	</script>		
+{% endblock %}		
+	<div class="container">
+		<br>
+		<main>
+			<div class="row g-5">
+				<div class="col-md-7 col-lg-8 ">
+					<h4 class="d-flex justify-content-between align-items-center mb-3">
+						<span class="text-primary">Your cart</span>
+						<span class="badge bg-primary rounded-pill">
+							{{ data |length}}
+						</span>
+					</h4>
+					<ul class="list-group mb-3">
+						{% for element in data %}
+							<li class="list-group-item d-flex justify-content-between lh-sm">
+								<div>
+									<h6 class="my-0">{{ element.article.category}}</h6>
+									<small class="text-body-secondary">{{ element.article.title|u.truncate(20, '...', false)}}
+										×
+										{{ element.quantity}}</small>
+								</div>
+								<span class="text-body-secondary">{{ element.article.price}}
+									eu
+								</span>
+							</li>
+						{% endfor %}
+						<li class="list-group-item d-flex justify-content-between">
+							<span>Total (EUR)</span>
+							<strong>{{ total}}
+								Eu</strong>
+						</li>
+					</ul>
+
+				</div>
+
+				<div class="col-md-5 col-lg-4">
+					<h4 class="mb-3">Billing address</h4>
+					
+					<form action="" method="POST" class="js-checkout-form checkout-form">
+					<div class="row mb-3">
+						<div class="col-sm-12 form-group">
+							<label for="inputEmail4" class="form-label text-secondary"><b>Name on Card</b></label>
+							<div class="input-group">
+								<input data-stripe="name" class="form-control" type="text" autocomplete="off" id="card-name" style="border-radius:0;height:50px;" required placeholder="Card Holder Name"/>
+							</div>
+						</div>
+					</div>
+				
+					<div class="row  mb-3">
+						<div class="col-sm-12 form-group">
+							<label for="inputEmail4" class="form-label text-secondary"><b>Card Number</b></label>
+							<div class="input-group">                                       
+								<input data-stripe="number" type="text" autocomplete="off" class="form-control js-cc-number" id="card-number" style="border-radius:0;height:50px;" required placeholder="Card Number"/>
+							</div>
+						</div>
+					</div>
+				
+					<div class="row mb-3">
+						<div class="col-sm-6  form-group">
+							<label for="inputEmail4" class="form-label text-secondary"><b>Expiration</b></label>
+							<div class="input-group">
+								<input data-stripe="exp" type="text" size="4" autocomplete="off" class="form-control js-cc-exp" id="card-expiration" required="required" style="border-radius:0;height:50px;" placeholder="mm/yy"/>
+							</div>
+						</div>
+						<div class="col-sm-6 form-group">
+							<label for="inputEmail4" class="form-label text-secondary"><b>Cvc</b></label>
+							<div class="input-group">                                        
+								<input data-stripe="cvc" type="text" size="4" autocomplete="off" class="form-control js-cc-cvc" id="card-cvc" required="required" style="border-radius:0;height:50px;" placeholder="CVC"/>
+							</div>
+						</div>
+					</div>
+				
+					<div class="row mb-3">
+						<div class="col-sm-12 form-group">
+							<label for="inputEmail4" class="form-label text-secondary"><b>Code Postal</b></label>
+							<div class="input-group">                                        
+								<input type="text" autocomplete="off" class="form-control" id="card-zip" style="border-radius:0;height:50px;" placeholder="Zip"/>
+							</div>
+						</div>
+					</div>
+				
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="alert alert-danger text-center js-checkout-error hidden"></div>
+						</div>
+					</div>
+				
+					<div class="row mb-3">
+						<div class="col-sm-12 text-center">
+							<button type="submit" class="js-submit-button btn btn-success" style="border-radius: 0;;">
+								Pay {{ total}} {{currency}}
+							</button>
+						</div>
+					</div>
+				</form>	
+								
+				</div>
+			</div>
+		</main>
+
+		{{ include('blog/footer.html.twig')}}
+		{% block javascript %}
+			<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+			
+		  {% endblock %}
+	</div>
+{% endblock %}
+

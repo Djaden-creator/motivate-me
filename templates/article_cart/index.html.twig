@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ArticleCartController!{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <br>
+  <main>
+    <div class="row g-5">
+      <div class="col-md-8 col-lg-8 ">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="text-primary">Your cart</span>
+          <span class="badge bg-primary rounded-pill">
+             {{ data |length}}
+          </span>
+        </h4>
+        <ul class="list-group mb-3">
+            {% for element in data %}
+                <li class="list-group-item d-flex justify-content-between lh-sm">
+                    <div>
+                      <h6 class="my-0">{{ element.article.category}}</h6>
+                      <small class="text-body-secondary">{{ element.article.title|u.truncate(20, '...', false)}} × {{ element.quantity}}</small>
+                    </div>
+                    <span class="text-body-secondary">{{ element.article.price}} eu </span>
+                    <a href="{{ path('app_article_delete',{id:element.article.id})}}">delete</a>
+                    {% else %}
+                        <h1>votre panier est vide</h1>
+                  </li> 
+            {% endfor %}          
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Total (EUR)</span>
+            <strong>{{ total}} Eu</strong>
+          </li>
+        </ul>
+        <a href="{{ path('app_alldelete') }}" class="btn-danger">vider le panier</a>
+        {% if data |length < 1%}
+          <button disabled class=" btn btn-info">Ajoutes des produits</button>
+          {% else %}
+            <a href="{{ path('app_order') }}" class=" btn btn-success">valider la commande</a>
+        {% endif %}
+        
+      </div>
+      
+      <div class="col-md-4 col-lg-4">
+        <h4 class="mb-3">Detail de vos articles au panier</h4>
+        {% for element in data %}
+          <div class="col">
+            <div class="card shadow-sm">
+                <img src="{{ asset(element.article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover">   
+              <div class="card-body">
+                  <strong>{{ element.article.price}} Eur  <small class="text-info">Payant</small></strong>  
+              <p class="card-text"style="font-size: 15px;">{{ element.article.title|u.truncate(50,'...') }}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">                                                  
+                <button type="button" class="btn btn-sm btn-outline-secondary">Payant</button>
+                </div>
+                <div class="btn-group">
+                  <small class="parent-show{{ element.article.id }}"></small>
+                  							
+                    {% if app.user and element.article.IslikeByUser(app.user) %}
+                      <i class="fas fa-thumbs-up" aria-hidden="true"></i>
+                    {% else %}
+                      <i class="far fa-thumbs-up" aria-hidden="true"></i>
+                    {% endif %}
+                    <span class="countlike">{{ element.article.articlelikes | length }}</span>								                   
+                 &nbsp;&nbsp;
+                  <span>                       
+                    {% if element.article.getComment|length > 1  %}
+                      Comments {{ article.getComment|length }}
+                    {% else %}
+                      Comment {{ element.article.getComment|length }}
+                    {% endif %}
+                  </span>
+                </div>
+                <small class="text-body-secondary">{{ element.article.createAt | ago }}</small>
+              </div>
+              </div>
+            </div>
+            </div>
+        <br>
+        {%  endfor %}
+        
+      </div>
+    </div>
+  </main>
+
+  {{ include('blog/footer.html.twig')}}
+</div>
+{% endblock %}
+{% block javascript %}
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  
+{% endblock %}

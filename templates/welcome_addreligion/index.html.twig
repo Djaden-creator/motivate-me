@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello WelcomeAddreligionController!{% endblock %}
+    
+    {% block body %}
+      <main class="form-signin w-100 m-auto">
+        {{ form_start(form) }}
+        <h3 class="mb-3 fw-light">Add your details <strong>{{ app.user.username }}</strong></h3>
+          {{ form_errors(form.religion) }}
+          {{ form_errors(form.picture) }}
+          {{ form_start(form) }} 
+           <small style="font-size:10px;">your religion</small>
+           <div class="form-floating mb-3">
+              {{ form_widget(form.religion) }}
+              <label for="floatingPassword">Religion</label>
+           </div>
+           <small style="font-size:10px;">your profil picture</small>
+           <div class="form-floating">
+            {{ form_widget(form.picture) }}
+          </div>
+          <br>
+          {{ form_widget(form.Ajouter) }}
+          {{ form_end(form) }}                     
+       </main>
+      
+    {{ include('blog/footer.html.twig')}}
+
+{% endblock %}
+{% block javascripts %} 
+	 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<!-- Bootstrap core JavaScript -->
+{% endblock %}
