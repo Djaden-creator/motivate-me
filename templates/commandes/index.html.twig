@@ -10,21 +10,26 @@
 <div class="container">
     <div class="my-3 p-3 bg-body rounded shadow-sm">
         <h6 class="border-bottom pb-2 mb-0">Mes Commandes ({{commandes | length }})  
-        {% for commande in commandes %}
-         
+        {% for commande in commandes %}         
         <div class="d-flex text-body-secondary pt-3">
-          <a href="{{ path('app_item',{'id':commande.article.id})}}">
-            <img src="{{ asset(commande.article.Imagepath) }}" alt="" width="64" height="64" style="border-radius: 5px;object-fit:cover">&nbsp;
-          </a>
-         
-          <p class="pb-3 mb-0 small lh-sm border-bottom">
-            <strong class="d-block text-gray-dark"><b>Religion</b> : {{commande.article.category}}</strong>
-            <strong class="d-block text-gray-dark"><b>article acheté</b> :il y'a  {{commande.dateofbuy | ago}}</strong>
-            <b>titre</b> : {{commande.article.title}},&nbsp;&nbsp;
-            <b>prix</b> :  {{commande.article.price}} {{device}},&nbsp;&nbsp;
-            <b>quantity</b> :  1
-            <strong class="d-block text-gray-dark"><a href="{{ path('app_delete_allcommande',{'id':commande.id}) }}">effacer cette commande</a></strong>
-          </p>
+          <div class="col-md-1 p-2">
+            <a href="{{ path('app_item',{'id':commande.article.id})}}" style="text-decoration: none;">
+              <img src="{{ asset(commande.article.Imagepath) }}" alt="" width="80" height="80" style="border-radius: 5px;object-fit:cover;border:solid 1px black;">&nbsp;
+            </a>
+          </div>
+          <div class="col-md-9 p-2">
+            <p class="pb-3 mb-0 small lh-sm border-bottom">
+              <strong class="d-block text-gray-dark"><b>Religion</b> : {{commande.article.category}}</strong>
+              <strong class="d-block text-gray-dark"><b>article acheté</b> :il y'a  {{commande.dateofbuy | ago}}</strong>
+              <b>titre</b> : {{commande.article.title}},&nbsp;&nbsp;
+              <b>prix</b> :  {{commande.article.price}} {{device}},&nbsp;&nbsp;
+              <b>quantity</b> :  1
+              <strong class="d-block text-gray-dark"><a class="btn-danger" href="{{ path('app_delete_allcommande',{'id':commande.id}) }}">effacer cette commande</a></strong>
+            </p>
+          </div>
+          <div class="col-md-2 p-2 d-flex justify-content-center align-items-center">
+            <a href="{{ path('app_download',{'id':commande.article.id }) }}" class="btn btn-bd-primary text-center">download</a>
+          </div>         
          <p>
          </p>
         </div>

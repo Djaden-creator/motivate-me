@@ -52,6 +52,9 @@ class Motivateur
     #[ORM\ManyToOne(inversedBy: 'motivators')]
     private ?Generatorcode $codeseller = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $demandenumbe = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -197,6 +200,18 @@ class Motivateur
     public function setCodeseller(?Generatorcode $codeseller): static
     {
         $this->codeseller = $codeseller;
+
+        return $this;
+    }
+
+    public function getDemandenumbe(): ?string
+    {
+        return $this->demandenumbe;
+    }
+
+    public function setDemandenumbe(string $demandenumbe): static
+    {
+        $this->demandenumbe = $demandenumbe;
 
         return $this;
     }

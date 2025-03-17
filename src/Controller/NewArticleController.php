@@ -22,6 +22,7 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class NewArticleController extends AbstractController
 {
+    
     #[Route('/new/article', name: 'app_new_article')]
     public function index(Request $request,SluggerInterface $slugger,Security $security,ManagerRegistry $save,EntityManagerInterface $entityManagerInterface): Response
     {
@@ -81,8 +82,7 @@ class NewArticleController extends AbstractController
              $em->flush();
             // ... persist the $product variable or any other work
 
-            $this->addFlash('success','Article created successfully');
-            return $this->redirectToRoute('app_new_article');
+            return $this->redirectToRoute('app_fichier');
         }
 
         return $this->render('new_article/index.html.twig', [

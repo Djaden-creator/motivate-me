@@ -1,0 +1,23 @@
+<div class="col md-2">
+	<a href="{{ path('app_motivator_profil',{'id':followingcount.offuserid.id}) }}" style="text-decoration: none;">
+		<div class=" text-bg-dark rounded-4 shadow-lg">
+			<div class="p-5 pb-3 text-white justify-content-center text-shadow-1">
+				<div class="text-center">
+					<img src="{{ asset(followingcount.offuserid.getImagepath) }}" class="text-center" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 2px black;object-fit:cover">
+				</div>
+				<h3 class="fw-bold text-center text-light" style="font-size: 18px;">
+					{{ followingcount.offuserid.username }}
+				</h3>
+				<div class="text-center">					
+					<div class="d-flex gap-2 justify-content-center">
+						<a href="{{ path('app_mixtchat')}}" style="text-decoration: none;color:white" class="badge d-flex align-items-center p-1 text-light bg-secondary border rounded-pill">
+							<img src="{{ asset(followingcount.offuserid.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;
+						      chat now &nbsp;
+							<img src="{{ asset(app.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+						</a>
+					</div>			
+				</div>
+			</div>
+		</div>
+	</a>
+</div>

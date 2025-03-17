@@ -2,10 +2,7 @@
     <div class="container">
         <h4 class="p-3 bg-body-tertiary">Expo des Articles</h4>
         <div class="d-flex p-2" style="gap:10px;">
-            <a href="" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">Christianisme</a>
-            <a href="" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">islam</a>
-            <a href="" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">Christianisme</a>
-            <a href="" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">islam</a>
+            <a href="" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">{{app.user.religion}}</a>
         </div>
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">        
        {% for article in articles %}
@@ -15,11 +12,28 @@
                 {% if app.user %}                
                     <a href="{{ path('app_item',{'id':article.id})}}"><img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
                     {% else %}
-                        <a href="{{ path('app_login') }}"><img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
-                {% endif %}
-                
-            
+                    <a href="{{ path('app_login') }}"><img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
+                {% endif %} 
+                <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+                    <img src="{{ asset(article.userposter.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
+                    {% if app.user.isFollowing(article.userposter) %}
+                        <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">abonné</strong></a>&nbsp;&nbsp;&nbsp;
+                        {% else %}
+                            <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">suivre</strong></a>&nbsp;&nbsp;&nbsp;
+                    {% endif %}
+                    <img src="{{ asset(article.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+                </div>           
             {% else %}
+                <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+                    <img src="{{ asset(article.userposter.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
+                    {% if app.user.isFollowing(article.userposter) %}
+                        <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">abonné</strong></a>&nbsp;&nbsp;&nbsp;
+                        {% else %}
+                            <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">suivre</strong></a>&nbsp;&nbsp;&nbsp;
+                    {% endif %}
+                   
+                    <img src="{{ asset(article.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+                </div>
                 <img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover">
             {% endif %}    
             <div class="card-body">

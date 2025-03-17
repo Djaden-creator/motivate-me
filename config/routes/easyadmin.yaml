@@ -1,7 +1,4 @@
 easyadmin:
     resource: .
-<<<<<<< ours
     type: easyadmin.routes
-=======
-    type: easyadmin.routes
->>>>>>> theirs
+

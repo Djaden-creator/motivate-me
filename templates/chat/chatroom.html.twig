@@ -1,0 +1,26 @@
+hey{{usernames}}
+<div class="pt-3 pe-3 meyou" data-mdb-perfect-scrollbar-init style="position: relative; height: 400px;overflow-y: auto;">
+
+</div>
+
+{# here goes the form to send message #}
+<div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+	<div class="coleit"></div>
+	<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
+	  {{ form_start(form,{
+        attr: { 
+            'novalidate': 'novalidate',
+            'class':'messageme'
+            } 
+        }) }}
+         {{ form_widget(form.content) }}
+        <button type="submit" class="btn btn-primary sendit">Send</button>
+      {{ form_end(form) }}
+	<a class="ms-3 text-muted" href="#!">
+		<i class="fas fa-smile"></i>
+	</a>
+	<a class="ms-3" href="#!">
+		<i class="fas fa-paper-plane"></i>
+	</a>
+</div>
+{# end#}

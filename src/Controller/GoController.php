@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Motivateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -14,8 +15,12 @@ class GoController extends AbstractController
     public function index(EntityManagerInterface $entityManagerInterface): Response
     {
         $users=$entityManagerInterface->getRepository(User::class)->find($this->getUser());
+         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
+        
         return $this->render('go/index.html.twig', [
             'users' => $users,
+            'validedemandes'=>$validedemandes
         ]);
     }
 }

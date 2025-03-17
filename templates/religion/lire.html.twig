@@ -1,25 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Religion{% endblock %}
-
+{% block title %}Read about a religion{% endblock %}
 {% block body %}
-    <section class="container">
-        <div class="row py-lg-3">
-          <div class="col-lg-6 col-md-8 mx-auto">
-            <h3>{{religion.name}}</h3>
-            <h1 style="font-size: 18px;" class="mb-2"><mark>"{{religion.brief}}"</mark> </h1>
-            <p class="text-center">
-                <img src="{{ asset(religion.Imagepath) }}" width="200px" height="200px" alt="" style="object-fit: cover;">
-              </p>
-            <p style="font-size: 17px;">
-                {{religion.description}}
-            </p>           
-            <p>
-                <a href="{{ path('app_blog') }}">Go back</a>
-            </p>
+  <div class="container">
+      <div class="row flex-lg-row-reverse g-5 py-5">
+        <div class="col-4 col-sm-4 col-lg-4">
+          <h1 class="display-6 fw-bold lh-1 mb-3">Illustration</h1>
+          <img src="{{ asset(religion.Imagepath) }}" style="border-radius: 5px;object-fit:cover;" alt="Bootstrap Themes" height="400" width="100%" loading="lazy">
+        </div>
+        <div class="col-8 col-sm-8 col-lg-8">
+          <h1 class="display-6 fw-bold lh-1 mb-3">{{religion.name}}</h1>
+          <p style="font-size: 15px;"> {{religion.description}}</p>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <a href="{{ path('app_blog') }}" class="btn btn-primary btn-lg px-4 me-md-2">Go back</a>
           </div>
         </div>
-      </section>
+      </div>
+  </div>
 {% endblock %}
 
 

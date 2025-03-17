@@ -80,6 +80,9 @@ class Article
     #[ORM\OneToMany(targetEntity: Sauvegarde::class, mappedBy: 'article')]
     private Collection $sauvegardes;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fichier = null;
+
     public function __construct()
     {
         $this->articlelikes = new ArrayCollection();
@@ -423,5 +426,16 @@ class Article
         }
         return false;
     }
+    public function getFichier(): ?string
+    {
+        return $this->fichier;
+    }
 
+    public function setFichier(?string $fichier): static
+    {
+        $this->fichier = $fichier;
+
+        return $this;
+    }
+    
 }

@@ -6,7 +6,16 @@
     <div class="container px-4 py-5" id="custom-cards">
         <h2 class="pb-2 border-bottom d-flex">
           <img src="{{users.Imagepath}}" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 2px black;object-fit:cover"> 
-          <span style="margin-top:1px; margin-left:5px;">{{app.user.username}} </span>   
+          <span style="margin-top:1px; margin-left:5px;">{{app.user.username}} </span>
+          <a href="{{ path('app_mymotivatorlist') }}" title="listes des motivateurs" class="btn btn-secondary" style="margin-top:1px; margin-left:5px;">
+            <strong style="font-size: 12px;">
+              entrain de suivre {{ followingcount | length }}
+              {% if followingcount | length >1 %}
+                motivateurs 
+                {% else %}
+                  motivateur
+              {% endif %}
+            </strong> </a>   
         </h2>
         <h6>"Je suis <em><u>{{ app.user.username}}</u></em>  pour le moment je suis dans le <u><em>{{app.user.religion}}</em></u> peut etre plus tard je changerai la religion"</h6>
         <p class="btn btn-bd-primary" title="abonnement">aucun n'abonnement</p>
@@ -22,13 +31,14 @@
                   <strong class="text-gray-dark">Nature:devenir un motivateur</strong>
                 </div>
                 <span class="d-block">fait il y'a: {{ userdemande.date | ago }}</span>
+                <strong>Numero de suivi: {{ userdemande.demandenumbe }} </strong>
               </div>
   
               <div class="pb-3 mb-0 small lh-sm border-bottom w-100">
                 <div class="d-flex justify-content-between">
                   <strong class="text-gray-dark">status:
                     {% if userdemande.decision =='traitement encours...' %}
-                      <small class="btn-bd-secondary text-light p-2" style="font-size: 14px;">
+                      <small class="btn-secondary p-2" style="font-size: 14px;">
                          Traitement encours...
                       </small>
                       {% elseif userdemande.decision == 'acceptée' %}
@@ -70,6 +80,24 @@
             </a>          
           </div>
            {# end publication  #}
+
+           {# all my postes #}
+           {% if validedemandes %}
+            <div class="col md-3">
+              <a href="{{ path('app_mypostes') }}" style="text-decoration: none;">
+                <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg">
+                  <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">                  
+                        <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-center">
+                           Mes Postes   
+                        </h3>                    
+                  </div>
+                </div>
+              </a>          
+            </div>
+           {% endif %}
+           
+           {# end postes #}
+
             {# mes info detail #}
           <div class="col md-3">
             <a href=" {{ path('app_mesinfos') }}" style="text-decoration: none;">

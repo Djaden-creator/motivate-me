@@ -79,12 +79,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: LikeReply::class, mappedBy: 'userid')]
     private Collection $likeReplies;
 
-    /**
-     * @var Collection<int, Follower>
-     */
-    #[ORM\OneToMany(targetEntity: Follower::class, mappedBy: 'sessionuser')]
-    private Collection $followers;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $picture = null;
 
@@ -139,6 +133,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Motivateur::class, mappedBy: 'user')]
     private Collection $motivateurs;
 
+    /**
+     * @var Collection<int, Following>
+     */
+    #[ORM\OneToMany(targetEntity: Following::class, mappedBy: 'usersessionid')]
+    private Collection $followings;
+
+    /**
+     * @var Collection<int, Following>
+     */
+    #[ORM\OneToMany(targetEntity: Following::class, mappedBy: 'offuserid')]
+    private Collection $offuserfollowers;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'userone')]
+    private Collection $messageuserone;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'usertwo')]
+    private Collection $messageusertwo;
+
     public function __construct()
     {
         $this->Articleid = new ArrayCollection();
@@ -147,7 +165,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userid = new ArrayCollection();
         $this->replyComments = new ArrayCollection();
         $this->likeReplies = new ArrayCollection();
-        $this->followers = new ArrayCollection();
         $this->subcarts = new ArrayCollection();
         $this->addtocarts = new ArrayCollection();
         $this->orderdetails = new ArrayCollection();
@@ -155,6 +172,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->religions = new ArrayCollection();
         $this->sauvegardes = new ArrayCollection();
         $this->motivateurs = new ArrayCollection();
+        $this->followings = new ArrayCollection();
+        $this->offuserfollowers = new ArrayCollection();
+        $this->messageuserone = new ArrayCollection();
+        $this->messageusertwo = new ArrayCollection();
        
     }
     public function __toString():string
@@ -452,49 +473,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
        return $this;
    }
-
-   /**
-    * @return Collection<int, Follower>
-    */
-   public function getFollowers(): Collection
-   {
-       return $this->followers;
-   }
-
-   public function addFollower(Follower $follower): static
-   {
-       if (!$this->followers->contains($follower)) {
-           $this->followers->add($follower);
-           $follower->setSessionuser($this);
-       }
-
-       return $this;
-   }
-
-   public function removeFollower(Follower $follower): static
-   {
-       if ($this->followers->removeElement($follower)) {
-           // set the owning side to null (unless already changed)
-           if ($follower->getSessionuser() === $this) {
-               $follower->setSessionuser(null);
-           }
-       }
-
-       return $this;
-   }
-
-   /**
-     * this code allow to know if the user is followed by the user session
-     * @param \App\Entity\User $user
-     * @return bool
-     */
-    public function isFollowedBy(UserInterface $userInterface): bool
-    {    foreach ($this->followers as $followers) {
-            if($followers->getSessionuser()===$userInterface) return true;
-        }
-        return false;
-    }
-
     public function getPicture(): ?string
     {
         return $this->picture;
@@ -773,4 +751,132 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Following>
+     */
+    public function getFollowings(): Collection
+    {
+        return $this->followings;
+    }
+
+    public function addFollowing(Following $following): static
+    {
+        if (!$this->followings->contains($following)) {
+            $this->followings->add($following);
+            $following->setUsersessionid($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFollowing(Following $following): static
+    {
+        if ($this->followings->removeElement($following)) {
+            // set the owning side to null (unless already changed)
+            if ($following->getUsersessionid() === $this) {
+                $following->setUsersessionid(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Following>
+     */
+    public function getOffuserfollowers(): Collection
+    {
+        return $this->offuserfollowers;
+    }
+
+    public function addOffuserfollower(Following $offuserfollower): static
+    {
+        if (!$this->offuserfollowers->contains($offuserfollower)) {
+            $this->offuserfollowers->add($offuserfollower);
+            $offuserfollower->setOffuserid($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffuserfollower(Following $offuserfollower): static
+    {
+        if ($this->offuserfollowers->removeElement($offuserfollower)) {
+            // set the owning side to null (unless already changed)
+            if ($offuserfollower->getOffuserid() === $this) {
+                $offuserfollower->setOffuserid(null);
+            }
+        }
+
+        return $this;
+    }
+
+public function isFollowing(User $user): bool
+    {
+        foreach ($this->followings as $onlineuser) {
+            if($onlineuser->getOffuserid()===$user) return true;
+        }
+        return false;  
+    }
+
+/**
+ * @return Collection<int, Message>
+ */
+public function getMessageuserone(): Collection
+{
+    return $this->messageuserone;
+}
+
+public function addMessageuserone(Message $messageuserone): static
+{
+    if (!$this->messageuserone->contains($messageuserone)) {
+        $this->messageuserone->add($messageuserone);
+        $messageuserone->setUserone($this);
+    }
+
+    return $this;
+}
+
+public function removeMessageuserone(Message $messageuserone): static
+{
+    if ($this->messageuserone->removeElement($messageuserone)) {
+        // set the owning side to null (unless already changed)
+        if ($messageuserone->getUserone() === $this) {
+            $messageuserone->setUserone(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Message>
+ */
+public function getMessageusertwo(): Collection
+{
+    return $this->messageusertwo;
+}
+
+public function addMessageusertwo(Message $messageusertwo): static
+{
+    if (!$this->messageusertwo->contains($messageusertwo)) {
+        $this->messageusertwo->add($messageusertwo);
+        $messageusertwo->setUsertwo($this);
+    }
+
+    return $this;
+}
+
+public function removeMessageusertwo(Message $messageusertwo): static
+{
+    if ($this->messageusertwo->removeElement($messageusertwo)) {
+        // set the owning side to null (unless already changed)
+        if ($messageusertwo->getUsertwo() === $this) {
+            $messageusertwo->setUsertwo(null);
+        }
+    }
+
+    return $this;
+}
 }

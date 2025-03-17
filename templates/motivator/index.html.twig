@@ -5,15 +5,18 @@
 {% block body %}
 <main class="form-signin w-100 m-auto">
  {% if demandeform | length == 1 %}
-    <p class="alert alert-warning">
+    <div class="alert alert-warning">
+      <strong class="text-success">votre demande a été envoyé avec succés</strong>
+       <p>
         Nous validons une seule demande par account, votre demande est encours de traitement. supprimez la pour en faire une nouvelle      
-    </p>
+        </p> 
+    </div>
     <a  class="btn btn-danger" href="{{ path('app_profil') }}"> supprimer ma demande</a>
  {% else %}
     {{ form_start(newform) }}
-    <h3 class="mb-3 fw-light">faites votre demande de motivateur <strong>{{ app.user.username }}</strong></h3>
-         {{ form_errors(newform.picture) }}
-   
+    <h3 class="mb-3 fw-light" style="font-size: 18px;">devenez motivateur <strong>{{ app.user.username }}</strong></h3>
+    <strong class="errordemande text-danger"></strong>
+         {{ form_errors(newform.picture) }}  
        <small style="font-size:10px;">your title</small>
        <div class="form-floating">
          {{ form_widget(newform.leaderName) }}
@@ -45,9 +48,9 @@
        </div>
         <br>   
         {{ form_widget(newform. save) }}
-       <a href="{{ path('app_blog') }}" class="mt-5 mb-3 text-body-secondary">&copy; Home</p>
        {{ form_end(newform) }}
  {% endif %}
 </main>
 {% endblock %}
+
 

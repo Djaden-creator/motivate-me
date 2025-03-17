@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+    {% block title %}new article needs
+    {% endblock %}
+    
+    {% block body %}
+            <div class="container col-xxl-8 px-4 py-5">            
+                    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                        <div class="col-10 col-sm-8 col-lg-6">
+                            {{ form_start(newform) }}
+                            <h3 class="mb-3 fw-light">Add file to this article <strong>{{ app.user.username }}</strong></h3>
+                                 {{ form_errors(newform.fichier) }}                          
+                               <small style="font-size:10px;">add file pdf or docx</small>
+                               <div class="form-floating">
+                                 {{ form_widget(newform.fichier) }}
+                               </div>
+                                <br>
+                               <button type="submit" class="btn btn-primary w-100 py-2">Add file</button>                              
+                            {{ form_end(newform) }}
+                        </div>
+                        <div class="col-lg-6">
+                            <h1 class="display-5 fw-bold lh-1 mb-3">{{article.title|u.truncate(30,'...')}}</h1>
+                            <p class="lead">{{article.topic|u.truncate(150,'...')}}</p>
+                            <p class="text-danger">Attention: le format de fichier accepté pdf,docx</p>
+                        </div>
+                    </div>
+            </div>
+    {% endblock %}
+    

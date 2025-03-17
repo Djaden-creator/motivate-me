@@ -3,12 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Article;
+use App\Entity\Fichier;
 use App\Entity\Commande;
 use App\Entity\Motivateur;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class CommandesController extends AbstractController
@@ -56,5 +62,35 @@ final class CommandesController extends AbstractController
         }
         return $this->redirectToRoute('app_commandes');
 
-}
+    }
+
+    // here we delete all command for a particuler user
+    #[Route('/download/{id}', name: 'app_download')]
+    public function download($id,EntityManagerInterface $entityManagerInterface):response
+    {
+        try {
+            $file=$entityManagerInterface->getRepository(Article::class)->find($id);
+            $getfichier=$file->getFichier();
+            $path = $this->getParameter('fichier').'/'.$getfichier;
+            if (!file_exists($path)) {
+               throw $this->createNotFoundException("oups the file does not exist");
+               
+            }
+
+            // create the response
+            // $response = new Response();
+            // $response->headers->set('Content-Type', 'application/force-download');
+            // $response->headers->set('Content-Disposition', $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $getfichier));
+            // $response->headers->set('Content-Transfer-Encoding', 'binary');
+            // $response->headers->set('Content-Length', filesize($path));
+            // $response->setContent(file_get_contents($path));
+            // return $response;
+            $response=new BinaryFileResponse($path);
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT,$getfichier);
+            return $response;
+        } catch (Exception $e) {
+            throw $this->createNotFoundException("oups the file does not exist");
+        }
+
+    }
 }

@@ -1,19 +1,20 @@
 <?php
 namespace App\Controller;
 use App\Entity\User;
-use App\Form\WelcomeAddreligionType;
+use App\Entity\Motivateur;
 use App\Repository\UserRepository;
+use App\Form\WelcomeAddreligionType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class WelcomeAddreligionController extends AbstractController
 {
@@ -23,6 +24,9 @@ public function index(Request $request,SluggerInterface $slugger,ManagerRegistry
         
         $users = $em->getRepository(User::class)->find($id);
         
+        // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+        $validedemandes=$em->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
+
         $form = $this->createForm(WelcomeAddreligionType::class, $users);
         $form->handleRequest($request);
 
@@ -75,7 +79,8 @@ public function index(Request $request,SluggerInterface $slugger,ManagerRegistry
         }
         return $this->render('welcome_addreligion/index.html.twig', [
             'form' => $form->createView(),
-            'users'=>$users
+            'users'=>$users,
+            'validedemandes'=>$validedemandes
         ]);
     }
 }

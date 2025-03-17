@@ -2,27 +2,32 @@
 
 namespace App\Controller;
 
-use App\Entity\Generatorcode;
 use App\Entity\User;
+use App\Entity\Contact;
+use App\Form\ContactType;
 use App\Entity\Motivateur;
-use App\Form\GeneratorcodeType;
-use App\Form\GivesellercodeType;
-use App\Form\GivesellernumberType;
 use App\Form\MotivateurType;
-use App\Form\ValidatenumberType;
+use App\Entity\Generatorcode;
+use App\Form\GeneratorcodeType;
 use App\Form\ValidedemandeType;
+use App\Form\GivesellercodeType;
+use App\Form\ValidatenumberType;
+use App\Form\GivesellernumberType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 final class MotivatorController extends AbstractController
 {
+
+    // to send the demande of motivator
     #[Route('/motivator', name: 'app_motivator')]
     public function index(Security $security,Request $request,EntityManagerInterface $entityManagerInterface,SluggerInterface $sluggerInterface,ManagerRegistry $managerRegistry): Response
     {
@@ -45,12 +50,17 @@ final class MotivatorController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UploadedFile $pictures */
-            $pictures = $form->get('picture')->getData();
+            // getting all form data
+            $pictures=$form->get('picture')->getData();
+            // here to get the unique demande number
+            $token=random_bytes(4);
+            $generate=bin2hex($token);
             $motivator->setDate(new \DateTimeImmutable())
                       ->setUser($users)
                       ->setEmail($getemail)
                       ->setDecision('traitement encours...')
-                      ->setMotif('none');
+                      ->setMotif('none')
+                      ->setDemandenumbe($generate);
 
             // this condition is needed because the 'brochure' field is not required
             // so the PDF file must be processed only when a file is uploaded
@@ -92,10 +102,8 @@ final class MotivatorController extends AbstractController
              $em=$managerRegistry->getManager();
              $em->persist($motivator);
              $em->flush();
+             return $this->redirectToRoute('app_motivator');
             // ... persist the $product variable or any other work
-
-            $this->addFlash('success','Article created successfully');
-            return $this->redirectToRoute('app_profil');
         }
         return $this->render('motivator/index.html.twig', [
             'newform' => $form,
@@ -125,6 +133,82 @@ final class MotivatorController extends AbstractController
             'demandes'=>$demandes,
             'validedemandes'=>$validedemandes
         ]);
+    }
+
+    // here the user is contacting us for his demande or for his motivator account
+    #[Route('/contact', name: 'app_contact')]
+    public function contactus(request $request,EntityManagerInterface $entityManagerInterface,ManagerRegistry $save): Response
+    {
+        
+        $users=$this->getUser();
+        $userforuser = $entityManagerInterface->getRepository(User::class)->find($users);
+        $mymail=$userforuser->getEmail();
+        $myname=$userforuser->getUsername();
+
+        // this code is to get all demande not yet validate by the admin status== traitement encours
+        $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
+       // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+        $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$users,'decision'=>'acceptée']);
+       
+       //here we are edding the user info in motivateur table  for decision
+        $contact= new Contact;
+        $form = $this->createForm(ContactType::class, $contact);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $token=random_bytes(5);
+            $generate=bin2hex($token);
+            $suivinumber=$form->get('suivinumber')->getData();
+            $purpose=$form->get('purpose')->getData();
+            $description=$form->get('description')->getData();
+
+            $contact->setUsermail($mymail)
+            ->setUsername($myname)
+            ->setDate( new \DateTime())
+            ->setContactsuivinumber($generate);
+            if(empty($suivinumber && $purpose && $description)){
+                return new JsonResponse([
+                    'status' => 'error',
+                    'errors' =>'tout le champs doivent etre remplis',
+                ], 400);
+                }
+            $count = $entityManagerInterface->createQueryBuilder()
+            ->select('COUNT(m.id)') // Count the number of rows
+            ->from(Motivateur::class, 'm')
+            ->where('m.demandenumbe = :suivinumber')
+            ->setParameter('suivinumber', $suivinumber)
+            ->getQuery()
+            ->getSingleScalarResult();
+            
+            if ($count == 1) {
+            $em=$save->getManager();
+            $em->persist($contact);
+            $em->flush();
+            
+            return new JsonResponse(['status' => 'success', 'message' => 'votre message a été bien envoyé!']);
+            }
+            else{
+                return new JsonResponse([
+                    'status' => 'error',
+                    'errors' =>'desolé votre numero de suivis n\'existe pas',
+                ], 400);
+            }
+               
+            return new JsonResponse([
+                'status' => 'error',
+                'errors' =>$form->getErrors(true, false),
+            ], 400);
+       }
+   
+       return $this->render('motivator/contact.html.twig', [
+        'newform'=>$form,
+        'users'=>$userforuser,
+        'demandes'=>$demandes,
+        'validedemandes'=>$validedemandes,
+        'contactform'=>$form
+   
+    ]);
     }
 
     // here we are updating and giving a user a seller number. we are updating the motivateur table 
@@ -182,28 +266,50 @@ final class MotivatorController extends AbstractController
         $userforuser = $entityManagerInterface->getRepository(User::class)->find($users);
         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'none']);
 
+         // this code is to get all demande not yet validate by the admin status== traitement encours
+         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
+         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$users,'decision'=>'acceptée']);
         $code = new Generatorcode();
         $form = $this->createForm(GeneratorcodeType::class, $code);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            
+            $codehere=$form->get('codenumber')->getData();
             $code->setDate(new \DateTimeImmutable())
             ->setStatus('disponible');
            
+            if(empty($codehere)){
+               return new JsonResponse([
+                   'status' => 'error',
+                   'errors' =>'ce champ ne dois pas etre vide',
+               ], 400);
+   
+            }elseif ($longreference = strlen($codehere)) {
+                # code... $longreference = strlen($reference);
+               if ($longreference > 6) {
+                return new JsonResponse([
+                   'status' => 'error',
+                   'errors' => 'le motivator code doit faire moins de 7 caractères',
+                ], 400);
+               } else {
+        }
+            }
+           $code->setCodenumber("Mot-".uniqid($codehere));
            $em=$save->getManager();
            $em->persist($code);
            $em->flush();
-          // ... persist the $product variable or any other work
-           $this->addFlash(
-              'success',
-              'votre info de profil a été edité avec succée'
-           );
-           return $this->redirectToRoute('app_generator');
+           return new JsonResponse(['status' => 'success', 'message' => 'motivator code bien enregistré']);
        }
         
         return $this->render('motivator/generator_seller_number.html.twig', [
             'users'=>$userforuser,
             'demandes'=>$demandes,
             'form'=>$form,
+            'demandes'=>$demandes,
+            'validedemandes'=>$validedemandes,
+        
         ]);
     }
 }

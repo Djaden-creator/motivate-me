@@ -3,19 +3,64 @@
 {% block title %}create new seller number{% endblock %}
 
 {% block body %}
-<main class="form-signin w-100 m-auto">
-
- {{ form_start(form) }}
- <h1 class="h3 mb-3 fw-normal">create new seller number</h1>
-  
-     <div class="form-floating">
-      {{ form_widget(form.codenumber) }}
-      <label for="floatingPassword">code number</label>
-     </div>
-    <br>
-    {{ form_widget(form.save) }}
-{{ form_end(form) }}
-</main>
+    <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+        <div class="row align-items-center g-lg-5 py-5">
+          <div class="col-lg-7 text-center text-lg-start">
+            <h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">Hey,buddy welcom to generator code</h1>
+            <p class="col-lg-10 fs-4">hey admin here, you can add more motivator code by simply add or type any code you wish and after you click on save or generate. </p>
+          </div>
+          <div class="col-md-10 mx-auto col-lg-5">
+            {{ form_start(form,{
+                attr: { 
+                    'novalidate': 'novalidate',
+                    'class': 'p-4 p-md-5 border rounded-3 bg-body-tertiary codegenerator', 
+                    } 
+                }) }}
+                <strong class="successmessage text-success"></strong>
+                <strong class="errorhere text-danger"></strong>
+              <div class="form-floating mb-3">
+                {{ form_widget(form.codenumber) }}
+                <label for="floatingInput">New code entry</label>
+              </div>        
+              {{ form_widget(form.save) }}
+              <hr class="my-4">
+              <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>
+            {{ form_end(form) }}
+          </div>
+        </div>
+    </div>    
 {% endblock %}
+{% block javascripts %} 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+   <!-- Bootstrap core JavaScript -->
+    
+   <script> 
+    // here to contact us team motivate me
+    $(document).ready(function(){
+       $('.codegenerator').on('submit',function(event){
+           event.preventDefault();
 
-
+             $.ajax({
+                 url: $(this).attr('action'),
+				 type: 'POST',
+				 data: $(this).serialize(),
+                 
+                 success: function (response) {
+                    
+					 $('.successmessage').html(response.message);
+                     $('.codegenerator')[0].reset();
+                     setTimeout(function(){ $('.successmessage').html(''); }, 4000);
+                 },
+                 error: function (xhr) {
+                    let errorMessage = xhr.responseJSON.errors;
+					 $('.errorhere').html(errorMessage);
+                     setTimeout(function(){ $('.errorhere').html(''); }, 10000);
+                 }
+             });
+         
+        })
+        })
+   </script>
+{% endblock %}

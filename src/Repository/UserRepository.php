@@ -55,6 +55,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                ->getOneOrNullResult()
            ;
        }
+
+        // here we make the search logic of the motivator
+    public function findBySearchQuery(string $query): array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.username LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
     
     
 }

@@ -1,0 +1,20 @@
+{% for result in results %}
+	<div class="col md-2">
+		
+			<div class="card text-bg-dark rounded-4" style="width: 18rem;">
+                <a href="{{ path('app_motivator_profil',{'id':result.id}) }}" style="text-decoration: none; color:white">
+				<div class="card-body text-center">
+					<img src="{{ asset(result.getImagepath) }}" class="text-center" alt="" style="height: 100px;width:100px; border-radius:50px;border:solid 2px black;object-fit:cover">
+					<h3 class="fw-bold" style="font-size: 18px;">
+						{{ result.username }}
+					</h3>
+				</div>
+                </a>
+			</div>
+		
+	</div>
+{% else %}
+	<h3 class="text-danger" style="font-size: 15px;">
+		sorry the user you are tryin to search for he is not a motivator
+	</h3>
+{% endfor %}

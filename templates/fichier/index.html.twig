@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}new article needs
+{% endblock %}
+
+{% block body %}
+		<div class="container col-xxl-8 px-4 py-5">
+			{% for getarticle in getarticles %}
+				<div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+					<div class="col-10 col-sm-8 col-lg-6">
+						<img src="{{ asset(getarticle.getImagepath) }}" class="d-block mx-lg-auto img-fluid" style="border-radius: 5px;" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+					</div>
+					<div class="col-lg-6">
+						<h1 class="display-6 fw-bold lh-1 mb-3">{{getarticle.title|u.truncate(40,'...')}}</h1>
+						<p class="lead">{{getarticle.topic|u.truncate(190,'...')}}</p>
+                         <p class="text-danger">lors que les gens acheterons cet article,ils aurons besoin de telecharger ce fichier,veuillez cliquez sur upload, le fichier doit etre en pdf,docx et ne doit pas en image</p>
+						<div class="d-grid gap-2 d-md-flex justify-content-md-start">
+							<a href="{{ path('app_upload',{'id':getarticle.id})}}" class="btn btn-primary btn-lg px-4 me-md-2">Upload</a>
+							<a href="{{ path('app_delete',{'id':getarticle.id}) }}" class="btn btn-danger btn-lg px-4">delete</a>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+
+		</div>
+{% endblock %}

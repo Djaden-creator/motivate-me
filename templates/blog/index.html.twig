@@ -32,63 +32,91 @@
 	<!-- Bootstrap core JavaScript -->
 	 
 	<script> 
-		$(document).on('click','.allclicks',function(event){
-			event.preventDefault();
+		$(document).ready(function(){
+			$(document).on('click','.allclicks',function(event){
+				event.preventDefault();
+	
+				const url= this.href;
+				const spancount=this.querySelector('span.countlike');
+				const spanlabel=this.querySelector('span.countlabel');
+				const icone=this.querySelector('i');
+				
+				
+			   axios.get(url).then(function(response){
+				spancount.textContent=response.data.articlelike;
+				
+				if(icone.classList.contains('fas')){
+				  icone.classList.replace('fas','far');
+				}
+				else{
+				  icone.classList.replace('far','fas');
+				}
+				
+			   }).catch(function(error){
+				if(error.response.status !== 403){
+				  console.log("something went wrong");
+				}
+				else{
+				  window.alert("connecte toi avant de liker un poste");
+				}
+			   });
+			 })
+	
+			 //this code is used to save the article and to unsave the article
+			 $(document).on('click','.sauvegarder',function(event){
+				event.preventDefault();
+	
+				const url= this.href;
+				const savecount=this.querySelector('span.countsave');
+				const spanlabel=this.querySelector('span.countlabel');
+				const icone=this.querySelector('i');
+				
+				
+			   axios.get(url).then(function(response){
+				savecount.textContent=response.data.savedarticle;
+				
+				if(icone.classList.contains('fas')){
+				  icone.classList.replace('fas','far');
+				}
+				else{
+				  icone.classList.replace('far','fas');
+				}
+				
+			   }).catch(function(error){
+				if(error.response.status !== 403){
+				  console.log("something went wrong");
+				}
+				else{
+				  window.alert("connecte toi avant de liker un poste");
+				}
+			   });
+	
+			 })
 
-			const url= this.href;
-			const spancount=this.querySelector('span.countlike');
-			const spanlabel=this.querySelector('span.countlabel');
-			const icone=this.querySelector('i');
-			
-			
-		   axios.get(url).then(function(response){
-			spancount.textContent=response.data.articlelike;
-			
-			if(icone.classList.contains('fas')){
-			  icone.classList.replace('fas','far');
-			}
-			else{
-			  icone.classList.replace('far','fas');
-			}
-			
-		   }).catch(function(error){
-			if(error.response.status !== 403){
-			  console.log("something went wrong");
-			}
-			else{
-			  window.alert("connecte toi avant de liker un poste");
-			}
-		   });
-		 })
-
-		 //this code is used to save the article and to unsave the article
-		 $(document).on('click','.sauvegarder',function(event){
-			event.preventDefault();
-
-			const url= this.href;
-			const savecount=this.querySelector('span.countsave');
-			const spanlabel=this.querySelector('span.countlabel');
-			const icone=this.querySelector('i');
-			
-			
-		   axios.get(url).then(function(response){
-			savecount.textContent=response.data.savedarticle;
-			
-			if(icone.classList.contains('fas')){
-			  icone.classList.replace('fas','far');
-			}
-			else{
-			  icone.classList.replace('far','fas');
-			}
-			
-		   }).catch(function(error){
-			if(error.response.status !== 403){
-			  console.log("something went wrong");
-			}
-			else{
-			  window.alert("connecte toi avant de liker un poste");
-			}
-		   });
-		 })
-	</script>
+			 $(document).on('click','.followclick',function(e){
+				e.preventDefault();
+				// url that we want to use
+				let urls=this.href;
+				console.log(urls);
+				// this function is to extract the id from  the urls
+				function getidfromurl(urls){
+					let segment =urls.split("/");
+					return segment.pop() || segment.pop();
+				}
+				// and here is the id extracted from the urls
+				let id=getidfromurl(urls);
+				$.ajax({
+					url:urls,
+					type:'POST',
+					data:$(this).serialize(),
+					success:function(data)
+					{
+						$('.showit' + id).html(data.message);
+					}
+				})			
+			 })
+		     
+		})
+		
+    </script>
 {% endblock %}

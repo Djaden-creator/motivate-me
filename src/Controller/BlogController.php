@@ -13,6 +13,7 @@ use App\Repository\AbonnerRepository;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ArticlelikeRepository;
+use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGenerator;
@@ -65,11 +66,17 @@ class BlogController extends AbstractController
     #[Route('/delete/{id}', name: 'app_delete')]
     public function delete($id,EntityManagerInterface $entityManager,ArticleRepository $repos):response
     {
-        $articles=$repos->find($id);
-        $entityManager ->remove($articles);
-        $entityManager ->flush();
+        try {
+            $articles=$repos->find($id);
+            $entityManager ->remove($articles);
+            $entityManager ->flush();
     
-        return $this->redirectToroute('app_mypublication');
+        return $this->redirectToroute('app_mypostes');
+        } catch (Exception $e) {
+            return new response("sorry you cant delete this article beacause it has some orders on it");
+        }
+    
+        return $this->redirectToroute('app_mypostes');
     }
 
     /**
@@ -81,7 +88,7 @@ class BlogController extends AbstractController
      * @return \Symfony\Component\HttpFoundation\Response
      */
     #[Route('/article/{id}/like', name: 'likeitem')]
-    public function Like(UserInterface $userInterface,Article $publication,ArticlelikeRepository $repolike,EntityManagerInterface $manager):Response
+    public function Like(UserInterface $userInterface,Article $publication,ArticlelikeRepository $repolike,EntityManagerInterface $manager): \Symfony\Component\HttpFoundation\Response
     {
         
         if(!$userInterface){

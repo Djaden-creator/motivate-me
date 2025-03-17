@@ -2,23 +2,25 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
-use App\Entity\Article;
 use App\Entity\User;
+use App\Entity\Article;
+use App\Entity\Motivateur;
+use App\Form\ArticleformType;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\String\Slugger\SluggerInterface;
-use App\Form\ArticleformType;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class UpdateController extends AbstractController
 {
+    // here we update my article a single article
     #[Route('/update/{id}', name: 'app_update')]
     public function edit(ManagerRegistry $save,request $request,$id,EntityManagerInterface $entityManager,ArticleRepository $repos,SluggerInterface $slugger,Security $security):response
     {
@@ -26,6 +28,13 @@ class UpdateController extends AbstractController
         $users=$this->getUser();
         $userofuser = $entityManager->getRepository(User::class)->find($users);
         $articles=$repos->find($id);
+
+        //this cose is to fetch and count all demande not yet accepted by the admin
+        $demandes=$entityManager->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+        
+        // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+        $validedemandes=$entityManager->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
+
         $form = $this->createForm(ArticleformType::class, $articles);
         $form->handleRequest($request);
 
@@ -77,7 +86,9 @@ class UpdateController extends AbstractController
 
         return $this->render('update/index.html.twig', [
             'newform' => $form,
-            'users'=>$userofuser
+            'users'=>$userofuser,
+            'demandes'=>$demandes,
+            'validedemandes'=>$validedemandes,  //this variable is used to check if user has a valid demande to add article or not.
         ]);
         
         
