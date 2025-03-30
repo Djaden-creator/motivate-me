@@ -1,65 +1,103 @@
-{# here the top where user pictures are #}
-<div class="d-flex p-1 bg-secondary followpropagation" style="border-radius:25px;border:border:2px solid black;width:auto;">
-	<img src="{{ asset(usernames.getImagepath) }}" title="{{usernames}} " width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;
-	<div class="justify-content-center align-content-center text-light">
-		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrows-expand-vertical" viewbox="0 0 16 16">
-			<path d="M8 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5M.146 8.354a.5.5 0 0 1 0-.708l2-2a.5.5 0 1 1 .708.708L1.707 7.5H5.5a.5.5 0 0 1 0 1H1.707l1.147 1.146a.5.5 0 0 1-.708.708zM10 8a.5.5 0 0 1 .5-.5h3.793l-1.147-1.146a.5.5 0 0 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L14.293 8.5H10.5A.5.5 0 0 1 10 8"/>
-		</svg>
-	</div>&nbsp;&nbsp;
-	<img src="{{ asset(app.user.getImagepath) }}" title="{{app.user.username}}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
-</div>
-{# here the top where user pictures are #}
-
-{# here the div and chat #}
-<div class="pt-3 pe-3" data-mdb-perfect-scrollbar-init style="position: relative; height: 400px;overflow-y: auto;">
-	{# this side is for,the  the user off #}
-	{# <div class="d-flex flex-row justify-content-start">
-			<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
+{# here goes the template chat welcome #}
+<style>
+	#hide {
+		display: none;
+	}
+</style>
+<div class="pt-3 pe-3 coolchat" data-mdb-perfect-scrollbar-init style="position: relative; height: 400px;overflow-y: auto;">
+	{% for getmychat in getmychat %}
+		<div class="d-flex flex-row justify-content-start">
+			<img src="{{ asset(getmychat.userone.getImagepath) }}" alt="avatar 1" style="width: 50px; height:50px; border-radius:25px;border:1px solid black;object-fit:cover;">
 			<div>
-				<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">Lorem ipsum
-																														                        dolor
-																														                        sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-																														                        dolor																													                        magna aliqua.</p>
-				<p class="small ms-3 mb-3 rounded-3 text-muted float-end">12:00 PM | Aug 13</p>
+				<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">
+					{{ getmychat.content }}
+				</p>
+				<p class="small ms-3 mb-3 rounded-3 text-muted float-end">{{ getmychat.date | ago }}</p>
 			</div>
-		</div> #}
-	{# this side is for,the me the user #}
-
-	{# here is for the me user m #}
-		{% for getmychat in getmychat %}
-			<div class="d-flex flex-row justify-content-end"> <div>
-				<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">
-                            {{ getmychat.content }}    
-                </p>
-				<p class="small me-3 mb-3 rounded-3 text-muted">{{ getmychat.date | ago }}</p>
-			</div>
-			<img src="{{ asset(app.user.getImagepath) }}" alt="avatar 1" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
 		</div>
-	{% else %}
-		<h5 class="p-2">nothing to show here for now</h5>
 	{% endfor %}
-	{# here is for the me user m #}
+	{% for mychat in mychat %}
+		<div class="d-flex flex-row justify-content-end">
+			<div>
+				<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">
+					{{ mychat.content }}
+				</p>
+				<p class="small me-3 mb-3 rounded-3 text-muted">{{ mychat.date | ago }}</p>
+			</div>
+			<img src="{{ asset(mychat.userone.getImagepath) }}" alt="avatar 1" style="width: 50px; height:50px; border-radius:25px;border:1px solid black;object-fit:cover;">
+		</div>
+	{% endfor %}
 </div>
-{# here goes the form #}
-<div class="good"></div>
-<div class="error"></div>
-{{ form_start(form,{
-    attr: { 
-        'novalidate': 'novalidate',
-        'class':'messageme'
-        } 
-    }) }}
-<div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-	<img src="{{ asset(app.user.getImagepath) }}" title="{{app.user.username}}" style="width: 50px; height:50px;border:2px solid black; object-fit:cover;border-radius:25px;">
-	{{ form_widget(form.content) }}
-	<a class="ms-1 text-muted" href="#!">
-		<i class="fas fa-paperclip"></i>
-	</a>
-	<a class="ms-3 text-muted" href="#!">
-		<i class="fas fa-smile"></i>
-	</a>
-	<button type="submit" style="border: none;background:none;outline:none;">
-		<i class="fas fa-paper-plane"></i>
-	</button>
-</div>
-{{ form_end(form) }}
+{# end  #}
+<form class="myformsend">
+	<div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
+		<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava6-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
+
+		<input type="text" class="form-control form-control-lg textme" id="exampleFormControlInput2" placeholder="Type message">
+		<input type="hidden" id="mevalue" value="{{ app.user.id }}">
+		<a class="ms-1 text-muted" href="#!">
+			<i class="fas fa-paperclip"></i>
+		</a>
+		<a class="ms-3 text-muted" href="#!">
+			<i class="fas fa-smile"></i>
+		</a>
+
+		<button class="sendthismessage" id="hide" value="{{ id }}" style="outline: none;border:none;background:none;">
+			<i class="fas fa-paper-plane"></i>
+		</button>
+
+
+	</div>
+</form>
+<div class="notblack"></div>
+{% block javascripts %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+
+	 <script> 
+		 $(document).ready(function(){
+
+		   // herr we hide the button when the input is empty
+		   $('.textme').on('input',function good(e) {
+		         let id=$(this).val();
+				 if(id.length === 0){
+					$('.sendthismessage').hide();			 
+				}
+				else{
+                    $('.sendthismessage').show();
+                }
+		  })
+		  // herr we are sending message
+		  $(document).on('click','.sendthismessage',function doitsend(e) {
+			e.preventDefault();
+			let id=$(this).val();
+			let message=$('.textme').val();
+			let mevalue=$('#mevalue').val();
+			
+			if(message.trim()===''){
+				$('.notblack').html("<small class='text-danger'>please write something</small>");
+	            return false;
+			}
+				$.ajax({
+					url:'/newchat',
+					type:'POST',
+					data: {
+		                id: id,
+						message:message,
+						mevalue: mevalue,
+		                messageme: true
+		                },
+					success:function(data)
+					{
+						$('.coolchat').html(data.success);
+						$('.myformsend')[0].reset();
+						$('.sendthismessage').hide();	
+						
+						
+					}
+				})	
+			})		
+		  })
+		</script>
+	<!-- Bootstrap core JavaScript -->
+{% endblock %}

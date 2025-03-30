@@ -6,6 +6,7 @@ use Stripe\Invoice;
 use App\Entity\User;
 use App\Bundle\SellMan;
 use App\Entity\Article;
+use App\Entity\Message;
 use App\Entity\Commande;
 use Stripe\StripeClient;
 use App\Entity\Addtocart;
@@ -91,6 +92,12 @@ class OrderController extends AbstractController
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
 
+        // this code is to get all message unread for the user
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+          'usertwo'=>$this->getUser(),
+          'status'=>"unread",
+        ]);
+
         $panier=$sessionInterface->get('panier',[]);
         $public_key=$_ENV['STRIPE_PUBLIC_KEY'];
        
@@ -171,6 +178,7 @@ class OrderController extends AbstractController
          'users'=>$user,
          'demandes'=>$demandes,
          'validedemandes'=>$validedemandes,
+         'unreadmessage'=> $getunread,
          
         ]); 
     }
@@ -179,17 +187,52 @@ class OrderController extends AbstractController
      * here we create the succeed page
      */
     #[Route('/success', name: 'app_success')]
-    public function succeedpage(Request $request): Response
+    public function succeedpage(Request $request,EntityManagerInterface $entityManagerInterface): Response
     {
-      return $this->render('order/succed.html.twig');
+
+      $user=$entityManagerInterface->getRepository(User::class)->find($this->getUser());
+      //this cose is to fetch and count all demande not yet accepted by the admin
+      $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+        
+      // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+      $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
+      // this code is to get all message unread for the user
+      $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+        'usertwo'=>$this->getUser(),
+        'status'=>"unread",
+      ]);
+
+      return $this->render('order/succed.html.twig',[
+      'unreadmessage'=> $getunread,
+      'demandes'=>$demandes,
+      'validedemandes'=>$validedemandes,
+      'users'=>$user,
+       ]);
     }
 
      /**
      * here we create the error  page
      */
     #[Route('/cancel', name: 'app_cancel')]
-    public function cancel(Request $request): response
+    public function cancel(Request $request,EntityManagerInterface $entityManagerInterface): response
     {
-      return $this->render('order/failed.html.twig');
+
+      $user=$entityManagerInterface->getRepository(User::class)->find($this->getUser());
+      //this cose is to fetch and count all demande not yet accepted by the admin
+      $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+        
+      // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+      $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
+      // this code is to get all message unread for the user
+      $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+        'usertwo'=>$this->getUser(),
+        'status'=>"unread",
+      ]);
+      return $this->render('order/failed.html.twig',[
+        'unreadmessage'=> $getunread,
+        'demandes'=>$demandes,
+        'validedemandes'=>$validedemandes,
+        'users'=>$user,
+      ]);
     }
 }

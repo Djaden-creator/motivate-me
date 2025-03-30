@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Contact;
+use App\Entity\Message;
 use App\Form\ContactType;
 use App\Entity\Motivateur;
 use App\Form\MotivateurType;
@@ -34,6 +35,15 @@ final class MotivatorController extends AbstractController
         $getemail=$security->getUser()->getUserIdentifier();
         $users=$this->getUser();
         $userforuser = $entityManagerInterface->getRepository(User::class)->find($users);
+
+        // this code is to get all message unread for the user
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
 
         //here all demande not yet threated for the admin with a status of traitement encore in the base.html.twig nav bar
         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
@@ -110,7 +120,9 @@ final class MotivatorController extends AbstractController
             'users'=>$userforuser,
             'demandeform'=>$demandeform,
             'validedemandes'=>$validedemandes,
-            'demandes'=>$demandes
+            'demandes'=>$demandes,
+            'unreadmessage'=> $getunread,
+            'getallinquery'=>$getallinquery
         ]);
     }
 
@@ -122,93 +134,28 @@ final class MotivatorController extends AbstractController
         $users=$this->getUser();
         $userforuser = $entityManagerInterface->getRepository(User::class)->find($users);
 
+        // this code is to get all message unread for the user
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
         // this code is to get all demande not yet validate by the admin status== traitement encours
         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
         
+         //this code allow us to get all inquiry not responded with the status of null
+         $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+
          // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
          $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$users,'decision'=>'acceptée']);
         
          return $this->render('motivator/alldemande.html.twig', [
             'users'=>$userforuser,
             'demandes'=>$demandes,
-            'validedemandes'=>$validedemandes
+            'validedemandes'=>$validedemandes,
+            'unreadmessage'=> $getunread,
+            'getallinquery'=>$getallinquery
         ]);
-    }
-
-    // here the user is contacting us for his demande or for his motivator account
-    #[Route('/contact', name: 'app_contact')]
-    public function contactus(request $request,EntityManagerInterface $entityManagerInterface,ManagerRegistry $save): Response
-    {
-        
-        $users=$this->getUser();
-        $userforuser = $entityManagerInterface->getRepository(User::class)->find($users);
-        $mymail=$userforuser->getEmail();
-        $myname=$userforuser->getUsername();
-
-        // this code is to get all demande not yet validate by the admin status== traitement encours
-        $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
-
-       // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
-        $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$users,'decision'=>'acceptée']);
-       
-       //here we are edding the user info in motivateur table  for decision
-        $contact= new Contact;
-        $form = $this->createForm(ContactType::class, $contact);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $token=random_bytes(5);
-            $generate=bin2hex($token);
-            $suivinumber=$form->get('suivinumber')->getData();
-            $purpose=$form->get('purpose')->getData();
-            $description=$form->get('description')->getData();
-
-            $contact->setUsermail($mymail)
-            ->setUsername($myname)
-            ->setDate( new \DateTime())
-            ->setContactsuivinumber($generate);
-            if(empty($suivinumber && $purpose && $description)){
-                return new JsonResponse([
-                    'status' => 'error',
-                    'errors' =>'tout le champs doivent etre remplis',
-                ], 400);
-                }
-            $count = $entityManagerInterface->createQueryBuilder()
-            ->select('COUNT(m.id)') // Count the number of rows
-            ->from(Motivateur::class, 'm')
-            ->where('m.demandenumbe = :suivinumber')
-            ->setParameter('suivinumber', $suivinumber)
-            ->getQuery()
-            ->getSingleScalarResult();
-            
-            if ($count == 1) {
-            $em=$save->getManager();
-            $em->persist($contact);
-            $em->flush();
-            
-            return new JsonResponse(['status' => 'success', 'message' => 'votre message a été bien envoyé!']);
-            }
-            else{
-                return new JsonResponse([
-                    'status' => 'error',
-                    'errors' =>'desolé votre numero de suivis n\'existe pas',
-                ], 400);
-            }
-               
-            return new JsonResponse([
-                'status' => 'error',
-                'errors' =>$form->getErrors(true, false),
-            ], 400);
-       }
-   
-       return $this->render('motivator/contact.html.twig', [
-        'newform'=>$form,
-        'users'=>$userforuser,
-        'demandes'=>$demandes,
-        'validedemandes'=>$validedemandes,
-        'contactform'=>$form
-   
-    ]);
     }
 
     // here we are updating and giving a user a seller number. we are updating the motivateur table 
@@ -219,6 +166,15 @@ final class MotivatorController extends AbstractController
         $users=$this->getUser();
         $userforuser = $entityManagerInterface->getRepository(User::class)->find($users);
         $processing=$entityManagerInterface->getRepository(Motivateur::class)->find($id);
+
+         // this code is to get all message unread for the user
+         $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+           //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
 
         // this code is to get all demande not yet validate by the admin status== traitement encours
         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
@@ -255,6 +211,8 @@ final class MotivatorController extends AbstractController
             'form'=>$form,
             'validedemandes'=>$validedemandes,
             'processing'=>$processing,
+            'unreadmessage'=> $getunread,
+            'getallinquery'=>$getallinquery
         ]);
     }
     // here to create a seller number of user
@@ -268,6 +226,16 @@ final class MotivatorController extends AbstractController
 
          // this code is to get all demande not yet validate by the admin status== traitement encours
          $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
+
+          //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+
+          // this code is to get all message unread for the user
+          $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
 
          // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
          $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$users,'decision'=>'acceptée']);
@@ -309,6 +277,8 @@ final class MotivatorController extends AbstractController
             'form'=>$form,
             'demandes'=>$demandes,
             'validedemandes'=>$validedemandes,
+            'unreadmessage'=> $getunread,
+            'getallinquery'=>$getallinquery
         
         ]);
     }

@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+    {% block title %}new article needs
+    {% endblock %}
+    
+    {% block body %}
+            <div class="container col-xxl-8 px-4 py-5">            
+                    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                        <div class="col-10 col-sm-8 col-lg-6">
+                            {% if getinquiry.status == "responded"  %}
+                                <h3 class="mb-3 fw-light">vous avez repondu a cette demande par <strong class="text-success">{{getinquiry.status}}</strong></h3>
+                           
+                            {% else %}
+                                {{ form_start(form) }}
+                                <h3 class="mb-3 fw-light">response this user <strong>{{ app.user.username }}</strong></h3>
+                                     {{ form_errors(form.status) }}                          
+                                   <small style="font-size:10px;">response the user</small>
+                                   <div class="form-floating">
+                                     {{ form_widget(form.status) }}
+                                   </div>
+                                    <br>
+                                   <button type="submit" class="btn btn-primary w-100 py-2">response</button>                              
+                                {{ form_end(form) }}
+                            {% endif %}                    
+                        </div>
+                        <div class="col-lg-6">
+                            <h1 class="display-5 fw-bold lh-1 mb-3" style="font-size: 30px;">{{getinquiry.purpose|u.truncate(100,'...')}}</h1>
+                            <p class="lead bg-body-tertiary p-2">{{getinquiry.description|u.truncate(150,'...')}}</p>
+                        </div>
+                    </div>
+            </div>
+    {% endblock %}
+    

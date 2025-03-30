@@ -1,0 +1,24 @@
+{{ form_start(form,{
+		attr: { 
+			'novalidate': 'novalidate',
+			'class': 'formhere', 
+			} 
+        }) 
+	}}
+	
+	<div class="mb-1">
+		<label for="exampleInputEmail1" class="form-label">Motivate your Groups</label>
+		<div class="text-danger" style="font-size: 10px;">
+			{{ form_errors(form.description) }}
+            {{ form_errors(form.image) }}
+		</div> 	
+		{{ form_widget(form.description) }}
+        <div style="margin-top: 5px;">
+            {{ form_widget(form.image) }}
+        </div>
+        
+    
+		<button type="submit" class="btn btn-primary commentnow" style="margin-top: 5px;">creat a post</button>
+	</div>
+{{ form_end(form) }}
+	

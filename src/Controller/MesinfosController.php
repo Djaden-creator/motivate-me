@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use Exception;
 use App\Entity\User;
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Form\MyinfoType;
 use App\Entity\Motivateur;
 use App\Form\UserformType;
@@ -29,6 +31,15 @@ class MesinfosController extends AbstractController
     {
         $users=$em->getRepository(User::class)->find($this->getUser());
 
+        // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+          //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
+
         // this code is about to fetch all demande of user not yet threated by the admin new demande 
         $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
 
@@ -37,7 +48,10 @@ class MesinfosController extends AbstractController
         return $this->render('mesinfos/index.html.twig', [
             'users' => $users,
             'demandes'=>$demandes,
-            'validedemandes'=>$validedemandes
+            'validedemandes'=>$validedemandes,
+            'unreadmessage'=> $getunread,
+            'getallinquery'=> $getallinquery,
+ 
         ]);
     }
 
@@ -49,6 +63,12 @@ class MesinfosController extends AbstractController
 
         $user = $em->getRepository(User::class)->find($session);
 
+        // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
        // this code is about to fetch all demande of user not yet threated by the admin new demande 
        $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
 
@@ -58,6 +78,9 @@ class MesinfosController extends AbstractController
        // here to get all plan of subscription in the database
         $subscriptions=$em->getRepository(Subscription::class)->findAll();
 
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
+
         if (! $subscriptions) {
             throw new Exception("errror on this one", 1);
             
@@ -66,7 +89,9 @@ class MesinfosController extends AbstractController
             'subscriptions'=>$subscriptions,
             'users'=>$user,
             'demandes'=>$demandes,
-            'validedemandes'=>$validedemandes 
+            'validedemandes'=>$validedemandes,
+            'unreadmessage'=> $getunread,
+            'getallinquery'=> $getallinquery,
          ]);
      }
 
@@ -78,6 +103,15 @@ class MesinfosController extends AbstractController
 
        // this code is about to fetch all demande of user not yet threated by the admin new demande 
        $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
+        // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+          //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
 
        // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
        $validedemandes=$em->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
@@ -99,7 +133,9 @@ class MesinfosController extends AbstractController
              'users' => $users,
              'form' => $form,
              'demandes'=>$demandes,
-             'validedemandes'=>$validedemandes
+             'validedemandes'=>$validedemandes,
+             'unreadmessage'=> $getunread,
+             'getallinquery'=> $getallinquery,
          ]);
      }
 
@@ -111,6 +147,15 @@ class MesinfosController extends AbstractController
         $formpass = $this->createForm(UpdatepasswordType::class, $users);
         // this code is about to fetch all demande of user not yet threated by the admin new demande 
        $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
+       // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+          //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
 
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$em->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
@@ -132,7 +177,9 @@ class MesinfosController extends AbstractController
              'users' => $users,
              'formpass' => $formpass,
              'demandes'=>$demandes,
-             'validedemandes'=>$validedemandes  // this is to show the add article button if the user is accepted by the admin
+             'validedemandes'=>$validedemandes, // this is to show the add article button if the user is accepted by the admin
+             'unreadmessage'=> $getunread,
+             'getallinquery'=> $getallinquery,
          ]);
      }
 
@@ -145,6 +192,15 @@ class MesinfosController extends AbstractController
 
        // this code is about to fetch all demande of user not yet threated by the admin new demande 
        $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
+        // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+          //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
 
        // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
        $validedemandes=$em->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
@@ -200,7 +256,9 @@ class MesinfosController extends AbstractController
             'users' => $users,
             'form' => $form,
             'demandes'=>$demandes,
-            'validedemandes'=>$validedemandes  // here we pass the demande of user to the view to show it in the template if the user is accepted by the admin
+            'validedemandes'=>$validedemandes,  // here we pass the demande of user to the view to show it in the template if the user is accepted by the admin
+            'unreadmessage'=>$getunread,
+            'getallinquery'=> $getallinquery,  // here we pass the inquiry of user to the view to show it in the template if the user has inquiry not responded yet
         ]);
     }
 }

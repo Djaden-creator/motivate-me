@@ -181,54 +181,42 @@
 									<strong>Admin</strong>
 								</a>
 							</li>
-							<li>
-								<a href="{{ path('app_user_demande')}}" class="px-2 btn btn-secondary rounded-pill px-3">
-									<strong>Demandes
-										<small class="bg-danger" style="height:10px;width:10px;border-radius:5px;padding:2px;font-size:10px;">
-											{% if demandes | length > 0 %}
-												new
-												{{demandes | length}}
-											{% else %}
-												{{demandes | length}}
-											{% endif %}
-										</small>
-									</strong>
-								</a>&nbsp;
-							</li>
+							{% if getallinquery|length > 0 %}
+								<li title="direct message to complain">
+									<a href="{{ path('app_inquiry')}}" class="btn btn-secondary position-relative">
+										<i class="fab fa-angellist"></i>
+										<span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+											<span class="visually-hidden">New alerts</span>
+										</span>
+									</a>&nbsp;
+								</li>
+							{% endif %}
+							{% if demandes | length > 0  %}
+								<li title="demandes to become a motivator">
+									<a href="{{ path('app_user_demande')}}" class="btn btn-secondary position-relative">
+										<i class="fas fa-volume-high"></i>
+										<span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+											<span class="visually-hidden">New alerts</span>
+										</span>
+									</a>&nbsp;
+								</li>
+							{% endif %}
 						{% endif %}
 						<li>
 							<a href="{{ path('app_landing')}}" class="nav-link px-2 link-light">
 								<strong>Home</strong>
 							</a>
 						</li>
-						<li>
-							<a href="{{ path('app_mixtchat')}}" class="btn btn-secondary position-relative">
-								<i class="fas fa-envelope fa-lg"></i>
-								<span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
-									<span class="visually-hidden">New alerts</span>
-								</span>
-							</a>&nbsp;
-						</li>
-						<li>
-							<a href="{{ path('app_abonnement') }}" class="nav-link px-2 link-light">
-								<strong>Abonnement</strong>
-							</a>
-						</li>
-						<li>
-							<a href="{{ path('app_new_article')}}" class="nav-link px-2 link-light">
-								<strong>Donate</strong>
-							</a>
-						</li>
-
-						{# here we see only option for the count who is validated #}
-						{% if validedemandes %}
-							<li>
-								<a href="" class="nav-link px-2 link-light">
-									<strong>Traffics</strong>
-								</a>
+						{% if unreadmessage | length > 0 %}
+							<li title="chats or messages ">
+								<a href="{{ path('app_mixtchat')}}" class="btn btn-secondary position-relative">
+									<i class="fas fa-envelope fa-lg"></i>
+									<span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+										<span class="visually-hidden">New alerts</span>
+									</span>
+								</a>&nbsp;
 							</li>
 						{% endif %}
-						{# end  #}
 						<li>
 							<a href="{{ path('app_about')}}" class="nav-link px-2 link-light">
 								<strong>Knows Us</strong>
@@ -244,25 +232,42 @@
 					</ul>
 					{% if app.user %}
 						<div class="col-md-3 text-end">
-							<div
-								class="dropdown">
-								{# if the demande of this user is validated by the admin he will se this button of adding articles #}
-								{% if validedemandes %}
-									<a href="{{ path('app_new_article')}}" style="text-decoration: none;">
-										<i class="fa fa-plus btn btn-secondary" title="add new article"></i>
-									</a>&nbsp;
-								{% endif %}
-								{# end  #}
-
-								<a href="{{ path('app_cart') }}" style="text-decoration: none;">
-									<i class="fa fa-shopping-cart btn btn-secondary" aria-hidden="true" title="shopping cart"></i>
+							<div class="btn-group">
+								<a class="btn btn-secondary btn-sm" href="{{ path('app_cart') }}" style="text-decoration: none;">
+									<i class="fa fa-shopping-cart" aria-hidden="true" title="shopping cart"></i>
 								</a>&nbsp;
+								<button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" width="16" height="16" >
+									<i class="fa fa-plus" title="add new article"></i>
+								</button>
+								<ul class="dropdown-menu dropdown-menu-dark">
+									{% if is_granted('ROLE_ADMIN') %}
+										<li>
+											<a title="admin" class="dropdown-item" href="{{ path('app_new_article')}}" style="text-decoration: none;">
+												Create new article
+											</a>
+										</li>
+									{% elseif validedemandes %}
+										<li>
+											<a title="motivator" class="dropdown-item" href="{{ path('app_motivatorarticle')}}" style="text-decoration: none;">
+												Create new article
+											</a>
+										</li>
+									{% endif %}
+									{# end #}
+									<li>
+										<a href="{{ path('app_group') }}" class="dropdown-item">
+											<strong>Create Group</strong>
+										</a>
+									</li>
+								</ul>
+							</div>
+							<div class="btn-group">
 								{% if users.picture != null %}
-									<button style="" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<button class="btn btn-secondary btn-sm" type="button">
 										<img src="{{asset('/' ~ users.Imagepath) }}" alt="ok" width="25" height="25" class="rounded-circle" style="object-fit: cover;">&nbsp;<small>{{ app.user.username }}</small>
 									</button>
 								{% else %}
-									<button style="" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<button class="btn btn-secondary btn-sm" type="button">
 										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewbox="0 0 16 16">
 											<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
 											<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
@@ -270,8 +275,9 @@
 										&nbsp;<small>{{ app.user.username }}</small>
 									</button>
 								{% endif %}
-
-
+								<button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+									<span class="visually-hidden">Toggle Dropdown</span>
+								</button>
 								<ul class="dropdown-menu dropdown-menu-dark">
 									<li>
 										<a class="dropdown-item active">{{ app.user.username}}</a>
@@ -279,7 +285,19 @@
 									<li>
 										<a class="dropdown-item" href="{{ path('app_profil') }}">Profil</a>
 									</li>
-									{% if  is_granted('ROLE_ADMIN')  %}
+									{% if validedemandes %}
+										<li>
+										<a href="{{ path('app_allmygroups') }}" class="dropdown-item">
+											My groups
+										</a>
+									</li>
+									{% endif %}
+									<li>
+										<a href="{{ path('app_abonnement') }}" class="dropdown-item">
+											Abonnement
+										</a>
+									</li>
+									{% if is_granted('ROLE_ADMIN') %}
 										<li>
 											<a class="dropdown-item" href="{{ path('app_religion') }}">Add religion</a>
 										</li>
@@ -290,13 +308,20 @@
 									<li>
 										<a class="dropdown-item" href="#">Settings</a>
 									</li>
-									<li><hr class="dropdown-divider"></li>
+									<li>
+										<a href="{{ path('app_new_article')}}" class="dropdown-item">
+											<strong>Donate</strong>
+										</a>
+									</li>
+
+									<li>
+										<hr class="dropdown-divider">
+									</li>
 									<li>
 										<a class="dropdown-item" href="{{ path('app_logout')}}">Logout</a>
 									</li>
 								</ul>
 							</div>
-
 						</div>
 					{% else %}
 						<div class="col-md-3 text-end">

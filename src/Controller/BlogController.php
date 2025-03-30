@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use Exception;
 use App\Entity\User;
 use App\Entity\Abonner;
 use App\Entity\Article;
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\Religion;
 use App\Entity\Motivateur;
 use App\Entity\Articlelike;
@@ -13,7 +16,6 @@ use App\Repository\AbonnerRepository;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ArticlelikeRepository;
-use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGenerator;
@@ -41,6 +43,15 @@ class BlogController extends AbstractController
       //we are getting the user demande to know if the decision is accepted he has to see add article button and etc...
       $validedemandes=$entityManager->getRepository(Motivateur::class)->findby(['user'=>$session,'decision'=>'acceptée']);
 
+      // here we are geting if the user got a new unread message in the nav bar
+      $getunread=$entityManager->getRepository(Message::class)->findBy([
+        'usertwo'=>$this->getUser(),
+        'status'=>"unread",
+    ]);
+    
+      //this code allow us to get all inquiry not responded with the status of null
+      $getallinquery=$entityManager->getRepository(Contact::class)->findBy(['status'=>null]);
+      
       $religion=$entityManager->getRepository(Religion::class)->findAll();
       if(isset($session))
       {
@@ -58,7 +69,9 @@ class BlogController extends AbstractController
         'religions'=>$religion,
         'users'=>$user,
         'demandes'=>$demandes,
-        'validedemandes'=>$validedemandes
+        'validedemandes'=>$validedemandes,
+        'unreadmessage'=> $getunread,
+        'getallinquery'=>$getallinquery
     ]);
     }
      

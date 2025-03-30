@@ -2,20 +2,22 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
 use App\Entity\User;
+use App\Entity\Article;
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\Following;
 use App\Entity\Motivateur;
+use App\Repository\UserRepository;
 use App\Repository\FollowingRepository;
 use App\Repository\MotivateurRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 
 final class FollowerController extends AbstractController
 {
@@ -71,6 +73,14 @@ final class FollowerController extends AbstractController
         //here we are getting a user demande for a particular user
         $userdemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser()]);
 
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+
+        // here we are geting if the user got a new unread message in the nav bar
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+        'usertwo'=>$this->getUser(),
+        'status'=>"unread",
+        ]);
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
       // we are getting all motivator count that this user online following
@@ -81,6 +91,9 @@ final class FollowerController extends AbstractController
         'demandes'=> $demandes,
         'validedemandes'=>$validedemandes,
         'userdemandes'=>$userdemandes,
+        'unreadmessage'=> $getunread,
+        'getallinquery'=>$getallinquery,
+        
       ]);
     }
 
@@ -97,6 +110,9 @@ final class FollowerController extends AbstractController
         //here we are getting a user demande for a particular user
         $userdemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser()]);
 
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
       
@@ -104,14 +120,19 @@ final class FollowerController extends AbstractController
         $getusers=$entityManagerInterface->getRepository(User::class)->findby(['id'=>$id]);
         // here we are getting the article 
         $articles=$entityManagerInterface->getRepository(Article::class)->findby(['userposter'=>$id]);
-         
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+          'usertwo'=>$this->getUser(),
+          'status'=>"unread",
+        ]);        
       return $this->render('follower/motivator_profil.html.twig',[
         'users' => $users,
         'demandes'=> $demandes,
         'validedemandes'=>$validedemandes,
         'userdemandes'=>$userdemandes,
         'getusers'=>$getusers,
-        'articles'=>$articles
+        'articles'=>$articles,
+        'unreadmessage'=> $getunread,
+        'getallinquery'=>$getallinquery,
 
       ]);
     }

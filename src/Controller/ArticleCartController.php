@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Article;
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\Motivateur;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,19 +20,30 @@ class ArticleCartController extends AbstractController
      * here we are adding items in the card
      */
     #[Route('/article/cart/{id}', name: 'app_article_cart')]
-    public function index(Article $article,$id,SessionInterface $sessionInterface): Response
+    public function index(Article $article,$id,SessionInterface $sessionInterface,EntityManagerInterface $entityManagerInterface): Response
     {
 
         $articleid=$article->getId();
         $panier=$sessionInterface->get('panier',[]);
-         
+
+         // this code is to get all message unread for the user
+         $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+          //this code allow us to get all inquiry not responded with the status of null
+         $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+     
         // si le panier est vide on ajoute le panier
         if(empty($panier[$articleid])){
             $panier[$articleid]=1;
         }
         //on set le panier
         $sessionInterface->set('panier',$panier);
-       return $this->redirectToRoute('app_cart');
+       return $this->redirectToRoute('app_cart',[
+         'unreadmessage'=> $getunread,
+         'getallinquery'=> $getallinquery,
+       ]);
     }
 
 
@@ -79,6 +92,14 @@ class ArticleCartController extends AbstractController
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
        
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+        // this code is to get all message unread for the user
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
         $panier=$sessionInterface->get('panier',[]);       
        //on initialise le variable
        $data=[];
@@ -101,6 +122,8 @@ class ArticleCartController extends AbstractController
         'users'=>$user,
         'demandes'=>$demandes,
         'validedemandes'=>$validedemandes,
+        'unreadmessage'=> $getunread,
+        'getallinquery'=> $getallinquery,  //this variable is used to check if user has a valid demande to add article or not.
        ]);
 
     }

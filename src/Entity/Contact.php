@@ -35,6 +35,13 @@ class Contact
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $status = null;
+
+    #[ORM\ManyToOne(inversedBy: 'inquiryidcontact')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $userid = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +127,30 @@ class Contact
     public function setDate(\DateTimeInterface $date): static
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getUserid(): ?User
+    {
+        return $this->userid;
+    }
+
+    public function setUserid(?User $userid): static
+    {
+        $this->userid = $userid;
 
         return $this;
     }

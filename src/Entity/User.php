@@ -157,6 +157,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'usertwo')]
     private Collection $messageusertwo;
 
+    /**
+     * @var Collection<int, Contact>
+     */
+    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'userid')]
+    private Collection $inquiryidcontact;
+
+    /**
+     * @var Collection<int, Groups>
+     */
+    #[ORM\OneToMany(targetEntity: Groups::class, mappedBy: 'userid')]
+    private Collection $groupsid;
+
+    /**
+     * @var Collection<int, Addingroup>
+     */
+    #[ORM\OneToMany(targetEntity: Addingroup::class, mappedBy: 'addedby')]
+    private Collection $addedby;
+
+    /**
+     * @var Collection<int, Addingroup>
+     */
+    #[ORM\OneToMany(targetEntity: Addingroup::class, mappedBy: 'newmember')]
+    private Collection $newmemberid;
+
+    /**
+     * @var Collection<int, Shareingroup>
+     */
+    #[ORM\OneToMany(targetEntity: Shareingroup::class, mappedBy: 'posterownerid')]
+    private Collection $shareingroups;
+
     public function __construct()
     {
         $this->Articleid = new ArrayCollection();
@@ -176,6 +206,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->offuserfollowers = new ArrayCollection();
         $this->messageuserone = new ArrayCollection();
         $this->messageusertwo = new ArrayCollection();
+        $this->inquiryidcontact = new ArrayCollection();
+        $this->groupsid = new ArrayCollection();
+        $this->addedby = new ArrayCollection();
+        $this->newmemberid = new ArrayCollection();
+        $this->shareingroups = new ArrayCollection();
        
     }
     public function __toString():string
@@ -811,7 +846,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
+// if the user is following 
 public function isFollowing(User $user): bool
     {
         foreach ($this->followings as $onlineuser) {
@@ -820,6 +855,14 @@ public function isFollowing(User $user): bool
         return false;  
     }
 
+    // if the user is  added in the group 
+public function isAdding(User $user): bool
+    {
+            foreach ($this->addedby as $member) {
+                if($member->getNewmember()===$user) return true;
+            }
+            return false;  
+    }
 /**
  * @return Collection<int, Message>
  */
@@ -874,6 +917,156 @@ public function removeMessageusertwo(Message $messageusertwo): static
         // set the owning side to null (unless already changed)
         if ($messageusertwo->getUsertwo() === $this) {
             $messageusertwo->setUsertwo(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Contact>
+ */
+public function getInquiryidcontact(): Collection
+{
+    return $this->inquiryidcontact;
+}
+
+public function addInquiryidcontact(Contact $inquiryidcontact): static
+{
+    if (!$this->inquiryidcontact->contains($inquiryidcontact)) {
+        $this->inquiryidcontact->add($inquiryidcontact);
+        $inquiryidcontact->setUserid($this);
+    }
+
+    return $this;
+}
+
+public function removeInquiryidcontact(Contact $inquiryidcontact): static
+{
+    if ($this->inquiryidcontact->removeElement($inquiryidcontact)) {
+        // set the owning side to null (unless already changed)
+        if ($inquiryidcontact->getUserid() === $this) {
+            $inquiryidcontact->setUserid(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Groups>
+ */
+public function getGroupsid(): Collection
+{
+    return $this->groupsid;
+}
+
+public function addGroupsid(Groups $groupsid): static
+{
+    if (!$this->groupsid->contains($groupsid)) {
+        $this->groupsid->add($groupsid);
+        $groupsid->setUserid($this);
+    }
+
+    return $this;
+}
+
+public function removeGroupsid(Groups $groupsid): static
+{
+    if ($this->groupsid->removeElement($groupsid)) {
+        // set the owning side to null (unless already changed)
+        if ($groupsid->getUserid() === $this) {
+            $groupsid->setUserid(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Addingroup>
+ */
+public function getAddedby(): Collection
+{
+    return $this->addedby;
+}
+
+public function addAddedby(Addingroup $addedby): static
+{
+    if (!$this->addedby->contains($addedby)) {
+        $this->addedby->add($addedby);
+        $addedby->setAddedby($this);
+    }
+
+    return $this;
+}
+
+public function removeAddedby(Addingroup $addedby): static
+{
+    if ($this->addedby->removeElement($addedby)) {
+        // set the owning side to null (unless already changed)
+        if ($addedby->getAddedby() === $this) {
+            $addedby->setAddedby(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Addingroup>
+ */
+public function getNewmemberid(): Collection
+{
+    return $this->newmemberid;
+}
+
+public function addNewmemberid(Addingroup $newmemberid): static
+{
+    if (!$this->newmemberid->contains($newmemberid)) {
+        $this->newmemberid->add($newmemberid);
+        $newmemberid->setNewmember($this);
+    }
+
+    return $this;
+}
+
+public function removeNewmemberid(Addingroup $newmemberid): static
+{
+    if ($this->newmemberid->removeElement($newmemberid)) {
+        // set the owning side to null (unless already changed)
+        if ($newmemberid->getNewmember() === $this) {
+            $newmemberid->setNewmember(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Shareingroup>
+ */
+public function getShareingroups(): Collection
+{
+    return $this->shareingroups;
+}
+
+public function addShareingroup(Shareingroup $shareingroup): static
+{
+    if (!$this->shareingroups->contains($shareingroup)) {
+        $this->shareingroups->add($shareingroup);
+        $shareingroup->setPosterownerid($this);
+    }
+
+    return $this;
+}
+
+public function removeShareingroup(Shareingroup $shareingroup): static
+{
+    if ($this->shareingroups->removeElement($shareingroup)) {
+        // set the owning side to null (unless already changed)
+        if ($shareingroup->getPosterownerid() === $this) {
+            $shareingroup->setPosterownerid(null);
         }
     }
 

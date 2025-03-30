@@ -1,0 +1,20 @@
+{% for alluser in alluser %}
+    <div class="list-group-item list-group-item-action py-3 lh-sm" id="userlight{{ alluser.id }}">
+        <div class="d-flex w-100 align-items-center justify-content-between">
+          <strong class="mb-1">{{alluser.username}}</strong>
+          {% if app.user.isAdding(alluser) %}
+            <div class="solidme{{ alluser.id }}">
+            <button class="btn btn-danger btn-sm text-light removeme" value="{{ alluser.id }}">remove</button> 	
+            <input type="hidden" class="groupid" value="{{groupo.id}}">
+          </div>
+          {% else %}
+            <div class="solidme{{ alluser.id }}">
+            <button class="btn btn-secondary btn-sm text-light addme" value="{{ alluser.id }}">add</button> 
+            <input type="hidden" class="groupid" value="{{groupo.id}}">	
+          </div>
+          {% endif %}
+                                                                                     
+        </div>
+        <div class="col-10 mb-1 small">you can now add thi user into your group by clicking add button</div>
+    </div>                        
+{% endfor %}			

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Contact;
 use App\Entity\Motivateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,9 +19,13 @@ class GoController extends AbstractController
          // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
          $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
         
+         //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+
         return $this->render('go/index.html.twig', [
             'users' => $users,
-            'validedemandes'=>$validedemandes
+            'validedemandes'=>$validedemandes,
+            'getallinquery'=>$getallinquery,
         ]);
     }
 }

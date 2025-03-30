@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New article{% endblock %}
+
+{% block body %}
+<main class="form-signin w-100 m-auto">
+ {{ form_start(newform) }}
+ <h3 class="mb-3 fw-light">Add your article <strong>{{ app.user.username }}</strong></h3>
+      {{ form_errors(newform.pictures) }}
+      {{ form_errors(newform.title) }}
+      {{ form_errors(newform.topic) }}
+      <small style="font-size:10px;">your title</small>
+    <div class="form-floating">
+      {{ form_widget(newform.title) }}
+      <label for="floatingInput">Title</label>
+    </div>
+    <small style="font-size:10px;">your Briefing</small>
+     <div class="form-floating">
+      {{ form_widget(newform.topic) }}
+      <label for="floatingPassword">briefing</label>
+    </div>
+    <small style="font-size:10px;">other information</small>
+    <div class="form-floating">
+      {{ form_widget(newform.category) }}
+      <label for="floatingPassword">category</label>
+    </div>
+    <small style="font-size:10px;">add a cover pictures</small>
+    <div class="form-floating">
+      {{ form_widget(newform.pictures) }}
+    </div>
+     <br>
+    <button type="submit" class="btn btn-primary w-100 py-2" type="submit">Add New Item</button>
+    <a href="{{ path('app_blog') }}" class="mt-5 mb-3 text-body-secondary">&copy; Home</p>
+    {{ form_end(newform) }}
+</main>
+{% endblock %}
+

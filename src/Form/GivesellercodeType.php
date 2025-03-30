@@ -27,7 +27,14 @@ class GivesellercodeType extends AbstractType
                      'rejetée' => 'rejetée',
                 ]
              ])
-            ->add('motif',TextareaType::class)
+             ->add('motif',ChoiceType::class,[
+                'placeholder'=>'choose a reason',
+                'choices'=>[
+                     'votre dossier est complet et valide' => 'votre dossier est complet et valide',
+                     'votre dossier manques de cible' => 'votre dossier manques de cible',
+                     'votre dossier manques de numero siret' => 'votre dossier manques de numero siret',
+                ]
+             ])
             ->add('codeseller', EntityType::class,[
                 'class' => Generatorcode::class,
                 'query_builder' => function (GeneratorcodeRepository $er) {

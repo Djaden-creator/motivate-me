@@ -3,6 +3,8 @@
 namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Article;
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\LikeReply;
 use App\Form\CommentType;
 use App\Entity\Motivateur;
@@ -11,6 +13,7 @@ use App\Entity\Commentaires;
 use App\Entity\ReplyComment;
 use App\Form\ReplyCommentType;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\OrderBy;
 use App\Repository\ArticleRepository;
 use App\Repository\LikeReplyRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,7 +21,6 @@ use App\Repository\CommentLikeRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Repository\CommentairesRepository;
 use App\Repository\ReplyCommentRepository;
-use Doctrine\ORM\Mapping\OrderBy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -48,6 +50,15 @@ class ItemController extends AbstractController
         
         $articleid->getId();
         $articlesbyids = $repos->find($id);
+
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManager->getRepository(Contact::class)->findBy(['status'=>null]);
+
+        // here we are geting if the user got a new unread message in the nav bar
+       $getunread=$entityManager->getRepository(Message::class)->findBy([
+        'usertwo'=>$this->getUser(),
+        'status'=>"unread",
+    ]);
 
         //start here we are updating the nombre de vue of an article
         if($articlesbyids)
@@ -94,7 +105,9 @@ class ItemController extends AbstractController
                 'articles'=> $articles,
                 'users'=>$users,
                 'demandes'=>$demandes,
-                'validedemandes'=>$validedemandes
+                'validedemandes'=>$validedemandes,
+                'unreadmessage'=> $getunread,
+                'getallinquery'=>$getallinquery
             ]);
         }
 

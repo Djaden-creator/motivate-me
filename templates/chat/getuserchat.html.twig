@@ -1,0 +1,147 @@
+{% extends 'chatbase.html.twig' %}
+
+{% block title %}Hello ChatController!
+{% endblock %}
+
+{% block body %}
+	<section>
+		<style>
+			#hide {
+				display: none;
+			}
+		</style>
+		<div class="container py-5">
+
+			<div class="row d-flex justify-content-center">
+				<div class="col-md-10 col-lg-8 col-xl-6">
+
+					<div class="card" id="chat2">
+						<div class="card-header d-flex justify-content-between align-items-center p-3">
+							<a href="{{ path('app_deleteallmessage',{'id':id}) }}" class="mb-0 deletemessage" title="delete all messages" style="text-decoration: none;color:black;">
+								<i class="far fa-trash-can"></i>
+							</a>
+							<a href="{{ path('app_mixtchat') }}" class="btn btn-primary btn-sm">
+								<i class="fas fa-arrow-left-long"></i>
+								see all messages
+							</a>
+						</div>
+						<div class="card-body coolhat" data-mdb-perfect-scrollbar-init style="position: relative; height: 450px;overflow-y: auto;">
+							{# here comes the for loops of all messages between me and a particular user  #}
+							{# here we get the offline user chats #}
+								{% for mychat in mychats %}
+									{% if mychat.userone is not same as(app.user) %}
+									<div class="d-flex flex-row justify-content-start upyou"> 
+                                            <img src="{{ asset(mychat.userone.getImagepath) }}" alt="avatar" class="d-flex align-self-center me-3" width="40" height="40" style="object-fit:cover;border-radius:20px;border:2px solid black">
+										<div>
+											<p class="small p-2 ms-3 mb-1 rounded-3 bg-body-tertiary">{{ mychat.content }}</p>
+											<p class="small ms-3 mb-3 rounded-3 text-muted">{{ mychat.date | date }}</p>
+										</div>
+									</div>
+								    {% elseif mychat.userone is same as(app.user) %}
+									<div class="d-flex flex-row justify-content-end mb-4 pt-1 upme">
+										<div>
+											<p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">{{ mychat.content }}</p>
+											<p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">{{ mychat.date | date }}</p>
+										</div>
+										<img src="{{ asset(mychat.userone.getImagepath) }}" alt="avatar" class="d-flex align-self-center me-3" width="40" height="40" style="object-fit:cover;border-radius:20px;border:2px solid black">
+									</div>
+								   {% endif %}
+							{% else %}
+								<div class="px-4 py-5 my-5 text-center beenhere">
+									<div class="col-lg-6 mx-auto">
+										<p class="mb-4"><strong>sorry no message fund between you</strong> and <strong>{{usernames}}</strong></p>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+						<div class="card-footer">
+							<form class="myformsend text-muted d-flex justify-content-start align-items-center p-3">
+								<img src="{{ asset(app.user.getImagepath) }}" alt="avatar 3" width="40" height="40" style="object-fit:cover;border-radius:20px;border:2px solid black">&nbsp;
+
+								<input type="text" class="form-control form-control-lg textme" id="exampleFormControlInput2" placeholder="Type message">&nbsp;
+								<input type="hidden" id="mevalue" value="{{ app.user.id }}">
+								<a class="ms-1 text-muted" href="#!">
+									<i class="fas fa-paperclip"></i>
+								</a>
+								<a class="ms-3 text-muted" href="#!">
+									<i class="fas fa-smile"></i>
+								</a>
+
+								<button class="sendthismessage text-success" id="hide" value="{{ id }}" style="outline: none;border:none;background:none;">
+									<i class="fas fa-paper-plane"></i>
+								</button>
+							</form>
+							<div class="notblack"></div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</section>
+{% endblock %}
+{% block javascripts %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+
+	 <script> 
+	        $(document).ready(function(){
+	
+	          // herr we hide the button when the input is empty
+	          $('.textme').on('input',function good(e) {
+	                let id=$(this).val();
+	                if(id.length === 0){
+	                   $('.sendthismessage').hide();			 
+	               }
+	               else{
+	                   $('.sendthismessage').show();
+	               }
+	         })
+	         // herr we are sending message
+	         $(document).on('click','.sendthismessage',function doitsend(e) {
+	           e.preventDefault();
+	           let id=$(this).val();
+	           let message=$('.textme').val();
+	           let mevalue=$('#mevalue').val();
+	           
+	           if(message.trim()===''){
+	               $('.notblack').html("<small class='text-danger'>please write something</small>");
+	               return false;
+	           }
+	               $.ajax({
+	                   url:'/newchat',
+	                   type:'POST',
+	                   data: {
+	                       id: id,
+	                       message:message,
+	                       mevalue: mevalue,
+	                       messageme: true
+	                       },
+	                   success:function(data)
+	                   {
+	                       $('.coolhat').append(data);
+	                       $('.myformsend')[0].reset();
+	                       $('.sendthismessage').hide();
+                           $('.beenhere').hide();	   
+	                   }
+	               })	
+	           })	
+               
+               // herr we are deleting all messages of a particular user
+               $(document).on('click','.deletemessage',function doitdelete(e) {
+                   e.preventDefault();
+                   let id=$(this).attr('href');
+                   $.ajax({
+                       url:id,
+                       type:'DELETE',
+                       success:function(data)
+                       {
+                        $('.coolhat').html(data);
+                       }
+                   })    
+               })
+	         })
+	       </script>
+	<!-- Bootstrap core JavaScript -->
+{% endblock %}

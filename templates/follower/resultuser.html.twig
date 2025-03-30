@@ -10,7 +10,7 @@
 				</h3>
 				<div class="text-center">					
 					<div class="d-flex gap-2 justify-content-center">
-						<a href="{{ path('app_mixtchat')}}" style="text-decoration: none;color:white" class="badge d-flex align-items-center p-1 text-light bg-secondary border rounded-pill">
+						<a href="{{ path('app_chat',{'id':followingcount.offuserid.id})}}" style="text-decoration: none;color:white" class="badge d-flex align-items-center p-1 text-light bg-secondary border rounded-pill">
 							<img src="{{ asset(followingcount.offuserid.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;
 						      chat now &nbsp;
 							<img src="{{ asset(app.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">

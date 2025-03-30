@@ -10,6 +10,7 @@ parameters:
      religion: "%kernel.project_dir%/public/religionpicture/"
      motivateur: "%kernel.project_dir%/public/motivator/"
      fichier: "%kernel.project_dir%/public/fichier/"
+     groupimage: "%kernel.project_dir%/public/imagegroupcontent/"
      
 
 services:

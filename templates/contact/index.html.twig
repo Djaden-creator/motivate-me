@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ContactController!
+{% endblock %}
+
+{% block body %}
+	<div class="album py-5 bg-body-tertiary">
+		<div class="container">
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {# here we do the loop for #}
+                {% for getinquiry in getinquiry %}
+                    <div class="col">
+					<div class="card shadow-sm">		
+                            <img src="{{ asset(getinquiry.userid.getImagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover">
+						<div class="card-body">
+							<p class="card-text"> {{getinquiry.purpose}}</p>
+							<div class="d-flex justify-content-between align-items-center">
+								<div class="btn-group">
+									<a href="{{ path('app_response',{'id':getinquiry.id})}}" class="btn btn-success">View and response</a>
+								</div>
+								<small class="text-body-secondary">{{getinquiry.date | ago}}</small>
+							</div>
+						</div>
+					</div>
+				</div>
+                {% endfor %}				
+                {# end loop for #}
+			</div>
+		</div>
+	</div>
+{% endblock %}

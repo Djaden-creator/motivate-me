@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Article;
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\Motivateur;
 use App\Entity\Sauvegarde;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +23,15 @@ class MypublicationController extends AbstractController
         $users=$em->getRepository(User::class)->find($this->getUser());
         $sauvegardearticles=$em->getRepository(Sauvegarde::class)->findBy(['user'=>$user]);
 
+        // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+           //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
+
         //this cose is to fetch and count all demande not yet accepted by the admin
         $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
         
@@ -31,7 +42,9 @@ class MypublicationController extends AbstractController
             'sauvegardearticles' => $sauvegardearticles,
             'users' => $users,
             'demandes'=>$demandes,
-            'validedemandes'=>$validedemandes,  //this variable is used to check if user has a valid demande to add article or not.
+            'validedemandes'=>$validedemandes,//this variable is used to check if user has a valid demande to add article or not.
+            'unreadmessage'=> $getunread,
+            'getallinquery'=> $getallinquery, //this variable is used to check if user has a inquiry to respond or not.
         ]);
     }
 
@@ -42,6 +55,15 @@ class MypublicationController extends AbstractController
         $user=$this->getUser();
         $users=$em->getRepository(User::class)->find($this->getUser());
         $mypostes=$em->getRepository(Article::class)->findBy(['userposter'=>$user]);
+
+         // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
 
         //this cose is to fetch and count all demande not yet accepted by the admin
         $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
@@ -54,6 +76,8 @@ class MypublicationController extends AbstractController
             'users' => $users,
             'demandes'=>$demandes,
             'validedemandes'=>$validedemandes,  //this variable is used to check if user has a valid demande to add article or not.
+             'unreadmessage'=> $getunread,
+             'getallinquery'=> $getallinquery, //this variable is used to check if user has a inquiry to respond or not.
         ]);
     }
 }

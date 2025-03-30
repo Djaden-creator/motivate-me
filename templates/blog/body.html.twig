@@ -14,26 +14,38 @@
                     {% else %}
                     <a href="{{ path('app_login') }}"><img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
                 {% endif %} 
+
+                {% if article.userposter is same as(app.user) %}
                 <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
-                    <img src="{{ asset(article.userposter.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
-                    {% if app.user.isFollowing(article.userposter) %}
-                        <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">abonné</strong></a>&nbsp;&nbsp;&nbsp;
-                        {% else %}
-                            <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">suivre</strong></a>&nbsp;&nbsp;&nbsp;
-                    {% endif %}
-                    <img src="{{ asset(article.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
-                </div>           
-            {% else %}
-                <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
-                    <img src="{{ asset(article.userposter.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
-                    {% if app.user.isFollowing(article.userposter) %}
-                        <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">abonné</strong></a>&nbsp;&nbsp;&nbsp;
-                        {% else %}
-                            <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">suivre</strong></a>&nbsp;&nbsp;&nbsp;
-                    {% endif %}
-                   
-                    <img src="{{ asset(article.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+                    <img src="{{ asset(article.userposter.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
                 </div>
+                {% else %}
+                <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+                    <img src="{{ asset(article.userposter.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
+                    {% if app.user.isFollowing(article.userposter) %}
+                        <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">abonné</strong></a>&nbsp;&nbsp;&nbsp;
+                        {% else %}
+                            <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">suivre</strong></a>&nbsp;&nbsp;&nbsp;
+                    {% endif %}
+                    <img src="{{ asset(article.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+                </div>                   
+                {% endif %}           
+            {% else %}
+                {% if article.userposter is same as(app.user) %}
+                    <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+                       <img src="{{ asset(article.userposter.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">                  
+                    </div>
+                {% else %}
+                    <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+                       <img src="{{ asset(article.userposter.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
+                        {% if app.user.isFollowing(article.userposter) %}
+                        <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">abonné</strong></a>&nbsp;&nbsp;&nbsp;
+                        {% else %}
+                        <a  href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(article.userposter.id)}}">suivre</strong></a>&nbsp;&nbsp;&nbsp;
+                        {% endif %}                   
+                       <img src="{{ asset(article.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+                   </div>                       
+                {% endif %}
                 <img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover">
             {% endif %}    
             <div class="card-body">

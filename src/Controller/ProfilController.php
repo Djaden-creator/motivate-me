@@ -2,14 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Entity\Message;
 use App\Entity\Following;
 use App\Entity\Motivateur;
-use App\Entity\User;
 use App\Repository\MotivateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProfilController extends AbstractController
 {
@@ -17,6 +18,12 @@ class ProfilController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $users=$em->getRepository(User::class)->find($this->getUser());
+
+        // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
 
         // this code is about to fetch all demande of user not yet threated by the admin new demande
         $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
@@ -36,7 +43,8 @@ class ProfilController extends AbstractController
             'demandes'=> $demandes,
             'validedemandes'=>$validedemandes,
             'userdemandes'=>$userdemandes,
-            'followingcount'=> $followingcount
+            'followingcount'=> $followingcount,
+            'unreadmessage'=> $getunread,
         ]);
     }
 

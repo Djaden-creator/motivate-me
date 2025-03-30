@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello all mygroups!{% endblock %}
+
+
+{% block body %}
+<div class="container">
+    <h2 class="pb-2 border-bottom d-flex">
+      My Groups         
+    </h2>
+    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
+        {# mes group detail #}
+        {% for group in groups %}
+        <div class="col md-3">
+         <a href="{{ path('app_getagroup',{'id':group.id }) }}" style="text-decoration: none;">
+           <div class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg">
+             <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1">                  
+                   <h3 class="pt-5 mt-5 mb-4 display-6 fw-bold">
+                      {{ group.groupname }}   
+                   </h3>                    
+             </div>
+           </div>
+         </a>          
+       </div>
+        {% endfor %}
+        {# end group  #}
+    </div>
+</div>
+      
+{% endblock %}
