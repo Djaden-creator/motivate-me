@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello my publication controller{% endblock %}
+
+{% block body %}
+    <div class="container px-4 py-5" id="custom-cards">
+        <h2 class="pb-2 border-bottom d-flex">
+          <img src="{{asset('/' ~ members.Imagepath) }}" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 2px black;object-fit:cover"> 
+          <span style="margin-top:1px; margin-left:5px;">{{members.username}} </span>   
+        </h2>
+        <h6>"Je suis <em><u>{{ members.username}}</u></em>  pour le moment je suis dans le <u><em>{{members.religion}}</em></u> peut etre plus tard je changerai la religion"</h6>
+        <p class="btn btn-bd-primary" title="abonnement">aucun n'abonnement</p>
+        <br>
+        <h2 class="pb-2 border-bottom d-flex">
+         My groups  
+        </h2>
+        <div class="row row-cols-1 row-cols-lg-3 align-items-stretch ">
+          {% for show in show %}
+            <div class="col md-12">
+                <a  class="btn btn-secondary">membre du group :{{ show.groupid.groupname}} <small class="text-light"><i class="fa-solid fa-circle-check"></i></small></a>      
+            </div>
+            {% else %}
+              <p>aucun group trouvé</p>     
+          {% endfor %}
+        </div>
+
+        </div>
+         
+      {{ include('blog/footer.html.twig')}}
+{% endblock %}
+{% block javascripts %} 
+	 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+	<!-- Bootstrap core JavaScript -->
+{% endblock %}
+
+
+

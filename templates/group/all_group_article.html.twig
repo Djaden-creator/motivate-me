@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}all articles in this group
+{% endblock %}
+
+{% block body %}
+
+	<div class="album py-1 bg-body-tertiary">
+		<div class="container">
+			<h4 class="p-3 bg-body-tertiary">Expo des Articles dans {{ name.groupname }}</h4>
+			<div class="d-flex p-2" style="gap:10px;">
+				<a href="" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">{{app.user.religion}}</a>
+			</div>
+			<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+				{% for article in articles %}
+					<div class="col">
+						<div class="card shadow-sm">							
+									<a href="{{ path('app_commentgrouppost',{'id':article.id})}}}"><img src="{{ asset(article.getImagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>								
+							<div class="card-body">
+								<p class="card-text" style="font-size: 15px;">{{ article.description|u.truncate(50,'...') }}</p>
+								<div class="d-flex justify-content-between align-items-center">
+									<div class="btn-group">		
+											<a href="{{ path('app_likepostgroup',{'id':article.id})}}" class="btn btn-sm btn-outline-secondary grouppostlike">
+												{% if article.isLikeagrouppost(app.user) %}
+													<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+													{% else %}
+													<i class="far fa-thumbs-up" aria-hidden="true"></i>
+												{% endif %}													   
+												 &nbsp;<span class="countaime">{{ article.postingroupid | length }}</span> 										   
+											</a>
+											<a href="{{ path('app_commentgrouppost',{'id':article.id})}}" class="btn btn-sm btn-outline-secondary"><i class="fa fa-message"></i>&nbsp; {{ article.commentgroupposts | length }} </a>
+									</div>
+									<small class="text-body-secondary">{{ article.date | ago }}</small>
+								</div>
+							</div>
+						</div>
+					</div>
+                    {% else %}
+                        <h4>no posts fund in this group</h4>
+				{%  endfor %}
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+{% block javascripts %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+	<!-- Bootstrap core JavaScript -->
+
+	 <script>
+	    // adding the user in the group
+	    $(document).ready(function(){               
+	            // here to like a post in the group and dislike
+	                  $(document).on('click','.grouppostlike',function(event){
+	                    event.preventDefault();
+	        
+	                    const url= this.href;
+	                    const spancount=this.querySelector('span.countaime');
+	                    const icone=this.querySelector('i');
+	                    
+	                    
+	                   axios.get(url).then(function(response){
+	                    spancount.textContent=response.data.likegrouppost;
+	                    
+	                    if(icone.classList.contains('fas')){
+	                      icone.classList.replace('fas','far');
+	                    }
+	                    else{
+	                      icone.classList.replace('far','fas');
+	                    }
+	                    
+	                   }).catch(function(error){
+	                    if(error.response.status !== 403){
+	                      console.log("something went wrong");
+	                    }
+	                    else{
+	                      window.alert("connecte toi avant de liker un poste");
+	                    }
+	                   });
+	                 })
+	    
+	                 // here to check if the article is read or not yet unsee to see
+	                
+	                 $(document).on('click', '.tosee', function(event) {
+	                    
+	                    // url that we want to use
+	                    let urls = this.href;
+	                    // this function is to extract the id from  the urls
+	                    function getidfromurl(urls) {
+	                        let segment = urls.split("/");
+	                        return segment.pop() || segment.pop();
+	                    }
+	                    // and here is the id extracted from the urls
+	                    let id = getidfromurl(urls);
+	                    $.ajax({
+	                        url: urls,
+	                        type: 'POST',
+	                        data: $(this).serialize(),
+	                    })
+	                });
+	                });
+</script>
+{% endblock %}

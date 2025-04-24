@@ -9,15 +9,24 @@
 			<div
 				class="col-lg-7 text-lg-start">
 				<h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">{{groups.groupname}}</h1>
-				{# form to post #}
-				{{ include('group/formposter.html.twig') }}
-				{# form to post end #}
-
+				{% if creator is same as(app.user) %}
+					{# form to post #}
+				     {{ include('group/formposter.html.twig') }}
+				    {# form to post end #}
+					{% else %}
+						<div class="alert alert-warning p-2">
+							<p class="text-body-emphasis mb-3 small">
+								you can't submit a post in the group,only the creator of this group who is also a motivator is llowed to submit an idea or a post in this group.
+							</p>
+							<p class="text-body-emphasis mb-3 small">if you have an idea you can share it with the creator or motivator via his mail <b><u>{{themail}}</u></b> so that it can be published in the group</p>
+						</div>					
+				{% endif %}
+			
+				<br>
 				{# post area #}
 				<div class="">
 					{% for allgrouppost in allgrouppost %}
-						<div class="col mb-3 lh-1 text-body-emphasis">
-							
+						<div class="col mb-3 lh-1 text-body-emphasis">						
 							<div class="card shadow-sm">
 								<div class="card-header d-flex">
 									<div class="btn-group">
@@ -25,42 +34,62 @@
 											<img src="{{asset(allgrouppost.posterownerid.getImagepath) }}" alt="{{allgrouppost.groupid.groupname}}" width="25" height="25" class="rounded-circle" style="object-fit: cover;">
 											&nbsp;<small>{{ allgrouppost.groupid.groupname }}</small>
 										</button>
-										<button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-											<span class="visually-hidden">Toggle Dropdown</span>
-										</button>
-										<ul class="dropdown-menu dropdown-menu-dark">
-											<li>
-												<a class="dropdown-item active">{{ app.user.username}}</a>
-											</li>
-											<li>
-												<a class="dropdown-item" href="{{ path('app_profil') }}">Profil</a>
-											</li>
-										</ul>
-									</div>
+										{% if allgrouppost.posterownerid == app.user %}
+											<button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+												<span class="visually-hidden">Toggle Dropdown</span>
+											</button>
+											<ul class="dropdown-menu dropdown-menu-dark">
+												<li>
+													<a href="{{ path('app_deletepostgroup',{'id':allgrouppost.id})}}" class="dropdown-item">Delete this post</a>
+												</li>
+												<li>
+													<a href="{{ path('app_editpostgroup',{'id':allgrouppost.id})}}" class="dropdown-item">Edit this post</a>
+												</li>
+												<li>
+													<a class="dropdown-item">Hide this post</a>
+												</li>
+											</ul>&nbsp;
+										{% endif %}	
+										{# to see if the user have readed the post yet #}
+										
+									</div>&nbsp; &nbsp;
 								</div>
-								<p class="lh-1 text-body-emphasis p-1">
-                                {{ allgrouppost.description }}
-							    </p>
-								<img src="{{ asset(allgrouppost.getImagepath) }}" class="bd-placeholder-img card-img-top" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveaspectratio="xMidYMid slice" focusable="false">
+								<a href="{{ path('app_commentgrouppost',{'id':allgrouppost.id})}}" class="tosee">
+									<img src="{{ asset(allgrouppost.getImagepath) }}" class="bd-placeholder-img card-img-top" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveaspectratio="xMidYMid slice" focusable="false">
+								</a>								
 								<div class="card-body">
-									<p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+									<p class="card-text">{{ allgrouppost.description }}</p>
 									<div class="d-flex justify-content-between align-items-center">
-										<div class="btn-group">
-											<a href="" type="button" class="btn btn-sm btn-outline-secondary"><i class="far fa-thumbs-up" aria-hidden="true"></i>&nbsp;52 </a>
-											<a href="" type="button" class="btn btn-sm btn-outline-secondary"><i class="fa fa-message"></i>&nbsp; 23 </a>
-											<a href="" type="button" class="btn btn-sm btn-outline-secondary"><i class="far fa-bookmark"></i>&nbsp; 23 </a> 
+										<div class="btn-group">		
+											<a href="{{ path('app_likepostgroup',{'id':allgrouppost.id})}}" class="btn btn-sm btn-outline-secondary grouppostlike">
+												{% if allgrouppost.isLikeagrouppost(app.user) %}
+													<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+													{% else %}
+													<i class="far fa-thumbs-up" aria-hidden="true"></i>
+												{% endif %}													   
+												 &nbsp;<span class="countaime">{{ allgrouppost.postingroupid | length }}</span> 										   
+											</a>
+											<a href="{{ path('app_commentgrouppost',{'id':allgrouppost.id})}}" class="btn btn-sm btn-outline-secondary"><i class="fa fa-message"></i>&nbsp; {{ allgrouppost.commentgroupposts | length }} </a>
 										</div>
 										<small class="text-body-secondary">{{ allgrouppost.date | ago }}</small>
 									</div>
 								</div>
 							</div>
 						</div>
+						{% else %}
+							<div class="col mb-3 lh-1 text-body-emphasis p-2">
+							 <div  class="alert alert-warning">
+                                  sorry this group has no post for now
+							 </div>
+							</div>
 					{% endfor %}
 				</div>
 				{# end post #}
 			</div>
 
 			<div class="col-md-10 mx-auto col-lg-5 position-sticky">
+
+				{% if creator is same as(app.user) %}
 				<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" style="width: 380px;overflow-y: auto;">
 					<div class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
 						<svg class="bi pe-none me-2" width="30" height="24">
@@ -95,6 +124,44 @@
 						{% endfor %}
 					</div>
 				</div>
+				</br>
+				{% endif %}				
+
+				{# here the setting  #}
+				<h6 class="display-4 fw-bold lh-1 text-body-emphasis mb-3" style="font-size: 18px;">settings</h6>
+				<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" style="width: 380px;overflow-y: auto;">
+					<div class="list-group list-group-flush border-bottom scrollarea mutehere" style="height: 380px;overflow-y: auto;">
+						{% if creator is same as(app.user) %}
+							<div class="list-group-item list-group-item-action py-3 lh-sm">
+								<div class="d-flex w-100 align-items-center justify-content-between">
+									<a href="{{ path('app_delete_group',{'id':idgroup})}}"><strong class="mb-1">Delete this Group</strong></a>
+								</div>
+								<div class="col-10 mb-1 small">the creator can also delete this group as he wants</div>
+							</div>
+							{% else %}
+							<div class="list-group-item list-group-item-action py-3 lh-sm">
+								<div class="d-flex w-100 align-items-center justify-content-between">
+									<a href="{{ path('app_quitgroup',{'id':idgroup})}}"><strong class="mb-1">Quitter le groupe</strong></a>
+								</div>
+								<div class="col-10 mb-1 small">you can also quit your group</div>
+							</div>
+						{% endif %}
+							
+							<div class="list-group-item list-group-item-action py-3 lh-sm">
+								<div class="d-flex w-100 align-items-center justify-content-between">
+									<a href="{{ path('app_allmembers',{'id':idgroup}) }}"><strong class="mb-1">Les membres du groupe</strong></a>
+								</div>
+								<div class="col-10 mb-1 small">here you can see members</div>
+							</div>
+							<div class="list-group-item list-group-item-action py-3 lh-sm">
+								<div class="d-flex w-100 align-items-center justify-content-between">
+									<a href="{{ path('app_gouppost',{'id':idgroup}) }}"><strong class="mb-1">articles du groupe</strong></a>
+								</div>
+								<div class="col-10 mb-1 small">you can view all articles posted in this group</div>
+							</div>
+					</div>
+				</div>
+				{# end setting #}
 			</div>
 		</div>
 	</div>
@@ -171,7 +238,55 @@
 				  $('.errrorgoeshere').html('<h3 class="text-danger" style="font-size: 10px;margin-left:0px;">sorry the user doesnt exist</h3>');      
 				} 
 			  });
-							//ici nous allons activer un temoignage pour que ca soit visible pour le visiteur dans la page index
+			
+			  // here to like a post in the group and dislike
+			  $(document).on('click','.grouppostlike',function(event){
+				event.preventDefault();
+	
+				const url= this.href;
+				const spancount=this.querySelector('span.countaime');
+				const icone=this.querySelector('i');
+				
+				
+			   axios.get(url).then(function(response){
+				spancount.textContent=response.data.likegrouppost;
+				
+				if(icone.classList.contains('fas')){
+				  icone.classList.replace('fas','far');
+				}
+				else{
+				  icone.classList.replace('far','fas');
+				}
+				
+			   }).catch(function(error){
+				if(error.response.status !== 403){
+				  console.log("something went wrong");
+				}
+				else{
+				  window.alert("connecte toi avant de liker un poste");
+				}
+			   });
+			 })
+
+			 // here to check if the article is read or not yet unsee to see
+			
+			 $(document).on('click', '.tosee', function(event) {
+				
+				// url that we want to use
+				let urls = this.href;
+				// this function is to extract the id from  the urls
+				function getidfromurl(urls) {
+					let segment = urls.split("/");
+					return segment.pop() || segment.pop();
+				}
+				// and here is the id extracted from the urls
+				let id = getidfromurl(urls);
+				$.ajax({
+					url: urls,
+					type: 'POST',
+					data: $(this).serialize(),
+				})
+			});
 			});
 			</script>
 {% endblock %}

@@ -1,0 +1,47 @@
+{% for comment in comments %}
+    <div class="d-flex">
+	<div class="p-2">
+		<img src="{{asset('/' ~ comment.userid.getImagepath) }}" style="background: red; height:30px; width:30px; border-radius:15px;object-fit:cover">
+	</div>
+	<div class="p-2">
+		<small>{{ comment.userid.getUsername }}-
+			<small style="font-size: 10px;">
+				{{ comment.date|ago }}</small>
+		</small>
+		<p style="color:black;text-decoration:none; font-size:16px">{{ comment.comment }}</p>
+		<div class="d-flex" style="column-gap: 15px;margin-top:-15px;">
+			{% if owner is same as(app.user) %}
+                <a href="{{ path('app_choosen',{'id': comment.id}) }}" class="commentpostgroup" style="color:black;text-decoration:none;font-size:12px;">
+                    {% if  comment.isVotedby(app.user) %}
+                       <span class="gettext text-success">this idea is voted as the best idea of this article verry good idea</span>&nbsp;
+                    {% else %}
+                        <span class="gettext text-secondary">this idea will be voted if it suits the admin or post interest</span>&nbsp;
+                    {% endif %}
+                    {% if  comment.isVotedby(app.user) %}
+                        <i class="fa-solid fa-check text-success"></i> &nbsp;
+                    {% else %}
+                        <i class="fa-solid fa-clock-rotate-left text-secondary"></i>&nbsp;
+                    {% endif %}
+                    <span class="countnumber"></span>
+                </a>
+                {% else %}
+                <span style="color:black;text-decoration:none;font-size:12px;">
+                    {% if  comment.isVotedby(app.user) %}
+                        <span class="gettext text-success">this idea is voted as the best idea of this article verry good idea</span>&nbsp;
+                     {% else %}
+                         <span class="gettext text-secondary">this idea will be voted if it suits the admin or post interest</span>&nbsp;
+                     {% endif %}
+                     {% if  comment.isVotedby(app.user) %}
+                         <i class="fa-solid fa-check text-success"></i> &nbsp;
+                     {% else %}
+                         <i class="fa-solid fa-clock-rotate-left text-secondary"></i>&nbsp;
+                     {% endif %}
+                     <span class="countnumber"></span>
+                </span>                     
+                {% endif %}         
+		</div>
+	</div>
+</div>
+{% endfor %}
+
+

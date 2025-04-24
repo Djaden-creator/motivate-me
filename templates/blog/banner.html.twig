@@ -1,6 +1,13 @@
 <section class="text-center container">
 	<div class="row py-lg-3">
 		<h1 class="fw-light">Bienvenu sur Motivate me</h1>
+		{% if notification %}
+			<p class="alert alert-warning text-center">
+				vous avez {{ notification | length }} nouveaux article a consulter dans vos groupes <a href="{{ path('app_usergroup') }}">consulter mes groupes</a>
+			</p>
+				
+		{% endif %}
+		
 		<p class="lead text-body-secondary">notre plateforme vous offres des beaux articles basé sur la croyance de votre religion,nous vous motivons pour la gloire de Dieu le createur,d'autres articles sont gratuits et d'autre a vendre vous etes libre de faire votre choix,nous continuerons toujours a vous motiver selon votre croyance!</p>
         <p>
 		 {% for religion in religions %}

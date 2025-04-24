@@ -19,8 +19,15 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            
-            custom_authenticator: App\Security\LoginAuthenticator
+
+            form_login:
+                login_path: app_login # Route to display the login form
+                check_path: app_login # Route to handle the login form submission
+                default_target_path: app_blog # Redirect here after successful login
+                username_parameter: email
+                password_parameter: password
+                always_use_default_target_path: false # Optional: Set to true if you always want to redirect to this path
+
             logout:
                 path: app_logout
                 # where to redirect after logout

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello my publication controller{% endblock %}
+
+{% block body %}
+    <div class="container px-4 py-5" id="custom-cards">
+        <h2 class="pb-2 border-bottom d-flex">
+          <img src="{{asset('/' ~ name.userid.Imagepath) }}" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 2px black;object-fit:cover"> 
+          <span style="margin-top:1px; margin-left:5px;">{{name.groupname}} </span>&nbsp;&nbsp;
+           <span>(
+            <small>
+                {% if members > 1  %}
+                    {{ members | length }} membres
+                    {% else %}
+                        {{ members | length }} membre
+                {% endif %}
+            </small>
+           
+           )</span>  
+        </h2>
+      
+        <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
+            {# mes publication detail #}
+            {% for member in members %}
+                <div class="col md-3">
+                  <a href="{{ path('app_member_profil',{'id':member.newmember.id}) }}" style="text-decoration: none;">
+                    <div class="card card-cover text-bg-dark rounded-4 shadow-lg">
+                      <div class="d-flex flex-column h-100 p-5 pb-3 text-white text-shadow-1"> 
+                                    
+                            <h3 class="pt-5 mt-5 mb-4 display-6 lh-1 fw-bold text-center">
+                                <img src="{{asset('/' ~ member.newmember.Imagepath) }}" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 2px black;object-fit:cover"> 
+                               {{ member.newmember.username|u.truncate(16,'..')}}   
+                            </h3>
+                            <p class="text-center">membre actif <small class="text-success"><i class="fa-solid fa-circle-check"></i></small></p>                    
+                      </div>
+                    </div>
+                  </a>          
+                </div>
+             {% else %}
+                 <h6>il y'a aucun membre dans cet groupe</h6>
+           {% endfor %}
+            {# end publication  #}
+        </div>
+       
+       
+    </div>
+      {{ include('blog/footer.html.twig')}}
+{% endblock %}
+{% block javascripts %} 
+	 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+	<!-- Bootstrap core JavaScript -->
+{% endblock %}
+
+
+

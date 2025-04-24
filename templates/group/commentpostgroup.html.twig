@@ -1,0 +1,242 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BlogController!
+{% endblock %}
+
+{% block body %}
+	<main>
+
+		<div class="container py-4">
+			<div class="row">
+				<div class="col-md-8">
+					<div class="p-1 mb-4  rounded-3">
+						{% if postgroup %}
+							<div class="container-fluid">
+								<div style="justify-content:center;align-content:center;text-align:center; height:80px;background-color:black;position:absolute;margin-left:20px;margin-top:-20px; padding:5px;">
+									<h6 style="color: white;">
+										<b>{{ postgroup.date | date('F') }}</b>
+									</h6>
+									<span style="color: white;font-size:30px;">
+										<b>{{ postgroup.date | date('j') }}</b>
+									</span>
+								</div>
+								<img src="{{ asset(postgroup.getImagepath) }}" height="100%" width="100%" style="border-radius: 5px;" alt="">
+								<h1 class="fw-bold mb-3 p-2" style="font-size: 25px;">{{ postgroup.groupid.groupname }}</h1>
+								<p class="col-md-12 p-1">{{ postgroup.description }}</p>
+								<p class="col-md-8 sizepool p-1">{{ postgroup.date | date('l') }}
+									le
+									{{ postgroup.date | date('j F Y') }}
+									à
+									{{ postgroup.date | date('H:i') }}
+									&nbsp; &nbsp;
+									{# lu or not #}
+									{% for check in check %}
+										{% if check.postid is same as(postgroup) %}
+                                            <small class="text-success">article lu par vous <i class="fa-solid fa-circle-check"></i></small>
+											{% else %}
+												pas encore lu
+									   {% endif %}
+									{% endfor %}
+									   
+									   
+									{# lu or not #}
+								</p>
+								<a href="{{ path('app_likepostgroup',{'id':postgroup.id})}}" class="btn btn-sm btn-outline-secondary grouppostlike">
+												{% if postgroup.isLikeagrouppost(app.user) %}
+													<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+													{% else %}
+													<i class="far fa-thumbs-up" aria-hidden="true"></i>
+												{% endif %}													   
+												 &nbsp;<span class="countaime">{{ postgroup.postingroupid | length }}</span> 										   
+								</a>
+								<small class="btn btn-sm btn-outline-secondary"><i class="fa fa-message"></i>&nbsp; {{ postgroup.commentgroupposts | length }} </small>
+							</div>
+				        {% endif %}
+				</div>
+                 {# here goes the form of commenting #}
+                    {% if app.user %}
+                    <div class="p-3 checkform" style="margin-top: -25px;">
+                        {{ include('group/commentingroup.html.twig')}}
+                    </div>
+                    {% else %}
+                    <div class="mb-3">
+                        <a class=" btn btn-bd-primary" href="{{ path('app_login')}}">
+                                    Login to Comment</a>
+                    </div>
+                    {% endif %}
+                {# end form of commenting #}
+                {# template of all comment here #}
+                <div class="row p-2 fetchallcomment">
+                    {% if commentaires %} 
+                    {% for commentaire in commentaires %} 
+                       {{ include('group/allcomment.html.twig')}} 
+                    {% endfor %} 
+                    {% else %}
+                    <span class="nocomment">no comment available</span>
+                    {% endif %}
+                </div>
+                {# end of template #}
+			</div>
+
+			{# here the side row bar  #}
+
+			<div class="col-md-4 p-2">
+                <h5 class="fw-light">
+                    {{ getgrouppostall| length }}
+					 {% if getgrouppostall| length > 1 %}
+						articles publiéss
+					 {% else %}
+						article publié
+					 {% endif %}	
+                </h5>
+                {% for post in getgrouppostall %}
+                <div class="col">
+                    <div class="card shadow-sm">
+                        <a href="{{ path('app_item',{'id':post.id})}}"><img src="{{ asset(post.getImagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
+                        <div class="card-body">                          
+                            <p class="card-text" style="font-size: 15px;">{{ post.description|u.truncate(50,'...') }}</p>
+                            <div class="d-flex justify-content-between align-items-center">                              
+                                <div class="btn-group">                                   
+                                    <a href="{{ path('app_commentgrouppost',{'id':post.id}) }}" class="btn btn-bd-primary">
+											Lire	
+									</a>                                    
+                                </div>
+                                <small class="text-body-secondary">{{ post.date | ago }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br> {% endfor %}
+            </div>
+		</div>
+		<div class="container">
+			<footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+				<div class="col-md-4 d-flex align-items-center">
+					<a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
+						<svg class="bi" width="30" height="24">
+							<use xlink:href="#bootstrap"></use>
+						</svg>
+					</a>
+					<span class="mb-3 mb-md-0 text-body-secondary">© 2024 Company, Inc</span>
+				</div>
+
+				<ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+					<li class="ms-3">
+						<a class="text-body-secondary" href="#">
+							<svg class="bi" width="24" height="24">
+								<use xlink:href="#twitter"></use>
+							</svg>
+						</a>
+					</li>
+					<li class="ms-3">
+						<a class="text-body-secondary" href="#">
+							<svg class="bi" width="24" height="24">
+								<use xlink:href="#instagram"></use>
+							</svg>
+						</a>
+					</li>
+					<li class="ms-3">
+						<a class="text-body-secondary" href="#">
+							<svg class="bi" width="24" height="24">
+								<use xlink:href="#facebook"></use>
+							</svg>
+						</a>
+					</li>
+				</ul>
+			</footer>
+		</div>
+	</main>
+{% endblock %}
+
+{% block javascripts %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+	 <script> 
+		    $(document).ready(function(){
+				//here to like a post of a particular group
+
+		        $(document).on('click','.grouppostlike',function(event){
+				event.preventDefault();
+	
+				const url= this.href;
+				const spancount=this.querySelector('span.countaime');
+				const icone=this.querySelector('i');
+				
+				
+			   axios.get(url).then(function(response){
+				spancount.textContent=response.data.likegrouppost;
+				
+				if(icone.classList.contains('fas')){
+				  icone.classList.replace('fas','far');
+				}
+				else{
+				  icone.classList.replace('far','fas');
+				}
+				
+			   }).catch(function(error){
+				if(error.response.status !== 403){
+				  console.log("something went wrong");
+				}
+				else{
+				  window.alert("connecte toi avant de liker un poste");
+				}
+			   });
+			 })
+
+             //her we are voting the comment as best idea of the article
+             $(document).on('click','.commentpostgroup',function(event){
+				event.preventDefault();
+	
+				const url= this.href;
+				const spancount=this.querySelector('span.countnumber');
+				const spanlabel=this.querySelector('span.gettext')
+				const icone=this.querySelector('i');
+				
+				
+			   axios.get(url).then(function(response){
+				
+				if (response.data.vote == 1) {
+                    spanlabel.innerHTML = "<span class='text-success'>this idea is voted as the best idea of this article verry good idea</span>";
+					
+					icone.className='fa-solid fa-check text-success';					
+                } else {
+                    spanlabel.innerHTML = "<span class='text-secondary'>this idea will be voted if it suits the admin or post interest</span>";
+					icone.className='fa-solid fa-clock-rotate-left text-secondary';
+                }
+				
+			   }).catch(function(error){
+				if(error.response.status !== 403){
+				  console.log("something went wrong");
+				}
+				else{
+				  window.alert("connecte toi avant de liker un poste");
+				}
+			   });
+			 })
+		        					
+				//here is to submit a comment on a post in the group and fetch the comment directly
+				$('.formingroup').on('submit', function (e) {
+	                e.preventDefault();
+					var $form=$(e.currentTarget);
+						$.ajax({
+							url: $(this).attr('action'),
+							type: 'POST',
+							data: $(this).serialize(),
+							success: function (data) {
+								$('.fetchallcomment').html(data);
+								$('.nocomment').hide();
+								$('.cope').hide();
+								$('.formingroup')[0].reset(); // Reset form
+							},
+							error: function (xhr) {
+								let data=xhr.responseJSON;
+								if(data.status==='error'){
+									$('.cope').html(data.errors.join('<br>')).show();
+								}
+								
+							}
+						});	                    
+	            });
+		    });
+		</script>
+{% endblock %}

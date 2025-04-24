@@ -11,6 +11,7 @@ use App\Entity\Message;
 use App\Entity\Religion;
 use App\Entity\Motivateur;
 use App\Entity\Articlelike;
+use App\Entity\Notification;
 use App\Repository\UserRepository;
 use App\Repository\AbonnerRepository;
 use App\Repository\ArticleRepository;
@@ -48,6 +49,18 @@ class BlogController extends AbstractController
         'usertwo'=>$this->getUser(),
         'status'=>"unread",
     ]);
+
+    //we are getting the notification when the new post was added in the group
+    $notification=$entityManager->getRepository(Notification::class)->findBy([
+        'usertonotifie'=>$session,
+        'IsRead'=>false
+    ]);
+
+    // here we are geting if the user got a article in the group if he did not yet read it count it
+    $getunread=$entityManager->getRepository(Message::class)->findBy([
+        'usertwo'=>$this->getUser(),
+        'status'=>"unread",
+    ]);
     
       //this code allow us to get all inquiry not responded with the status of null
       $getallinquery=$entityManager->getRepository(Contact::class)->findBy(['status'=>null]);
@@ -71,7 +84,8 @@ class BlogController extends AbstractController
         'demandes'=>$demandes,
         'validedemandes'=>$validedemandes,
         'unreadmessage'=> $getunread,
-        'getallinquery'=>$getallinquery
+        'getallinquery'=>$getallinquery,
+        'notification'=>$notification,
     ]);
     }
      

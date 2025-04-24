@@ -236,7 +236,8 @@
 								<a class="btn btn-secondary btn-sm" href="{{ path('app_cart') }}" style="text-decoration: none;">
 									<i class="fa fa-shopping-cart" aria-hidden="true" title="shopping cart"></i>
 								</a>&nbsp;
-								<button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" width="16" height="16" >
+								{% if validedemandes %}
+									<button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" width="16" height="16" >
 									<i class="fa fa-plus" title="add new article"></i>
 								</button>
 								<ul class="dropdown-menu dropdown-menu-dark">
@@ -260,6 +261,7 @@
 										</a>
 									</li>
 								</ul>
+								{% endif %}				
 							</div>
 							<div class="btn-group">
 								{% if users.picture != null %}

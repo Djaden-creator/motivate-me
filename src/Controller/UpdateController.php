@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Article;
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\Motivateur;
 use App\Form\ArticleformType;
 use App\Repository\ArticleRepository;
@@ -35,6 +37,13 @@ class UpdateController extends AbstractController
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManager->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
 
+        $getunread=$entityManager->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+        ]);
+        
+          //this code allow us to get all inquiry not responded with the status of null
+          $getallinquery=$entityManager->getRepository(Contact::class)->findBy(['status'=>null]);
         $form = $this->createForm(ArticleformType::class, $articles);
         $form->handleRequest($request);
 
@@ -82,13 +91,16 @@ class UpdateController extends AbstractController
                 'success',
                 'votre article a été edité avec succée'
              );
+             return $this->redirectToRoute('app_fichier');
         }
 
         return $this->render('update/index.html.twig', [
             'newform' => $form,
             'users'=>$userofuser,
             'demandes'=>$demandes,
-            'validedemandes'=>$validedemandes,  //this variable is used to check if user has a valid demande to add article or not.
+            'validedemandes'=>$validedemandes,
+            'unreadmessage'=> $getunread,
+            'getallinquery'=>$getallinquery,  //this variable is used to check if user has a valid inquiry to send message or not.
         ]);
         
         

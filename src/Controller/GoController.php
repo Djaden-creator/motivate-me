@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\Motivateur;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,10 +23,18 @@ class GoController extends AbstractController
          //this code allow us to get all inquiry not responded with the status of null
         $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
 
+        // this code is to get all message unread for the user
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+
         return $this->render('go/index.html.twig', [
             'users' => $users,
             'validedemandes'=>$validedemandes,
             'getallinquery'=>$getallinquery,
+            'unreadmessage'=> $getunread,
         ]);
     }
 }

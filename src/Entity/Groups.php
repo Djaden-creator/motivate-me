@@ -42,6 +42,7 @@ class Groups
     #[ORM\OneToMany(targetEntity: Shareingroup::class, mappedBy: 'groupid')]
     private Collection $shareingroups;
 
+
     public function __construct()
     {
         $this->addingroups = new ArrayCollection();
@@ -160,4 +161,5 @@ class Groups
 
         return $this;
     }
+
 }

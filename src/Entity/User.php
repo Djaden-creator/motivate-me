@@ -187,6 +187,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Shareingroup::class, mappedBy: 'posterownerid')]
     private Collection $shareingroups;
 
+    /**
+     * @var Collection<int, Likepostgroup>
+     */
+    #[ORM\OneToMany(targetEntity: Likepostgroup::class, mappedBy: 'userid')]
+    private Collection $likepostgroups;
+
+    /**
+     * @var Collection<int, Commentgrouppost>
+     */
+    #[ORM\OneToMany(targetEntity: Commentgrouppost::class, mappedBy: 'userid')]
+    private Collection $commentgroupposts;
+
+    /**
+     * @var Collection<int, Votecomment>
+     */
+    #[ORM\OneToMany(targetEntity: Votecomment::class, mappedBy: 'userid')]
+    private Collection $votecomments;
+
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'usertonotifie')]
+    private Collection $notifications;
+
     public function __construct()
     {
         $this->Articleid = new ArrayCollection();
@@ -211,6 +235,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->addedby = new ArrayCollection();
         $this->newmemberid = new ArrayCollection();
         $this->shareingroups = new ArrayCollection();
+        $this->likepostgroups = new ArrayCollection();
+        $this->commentgroupposts = new ArrayCollection();
+        $this->votecomments = new ArrayCollection();
+        $this->notifications = new ArrayCollection();
        
     }
     public function __toString():string
@@ -1072,4 +1100,125 @@ public function removeShareingroup(Shareingroup $shareingroup): static
 
     return $this;
 }
+
+/**
+ * @return Collection<int, Likepostgroup>
+ */
+public function getLikepostgroups(): Collection
+{
+    return $this->likepostgroups;
+}
+
+public function addLikepostgroup(Likepostgroup $likepostgroup): static
+{
+    if (!$this->likepostgroups->contains($likepostgroup)) {
+        $this->likepostgroups->add($likepostgroup);
+        $likepostgroup->setUserid($this);
+    }
+
+    return $this;
+}
+
+public function removeLikepostgroup(Likepostgroup $likepostgroup): static
+{
+    if ($this->likepostgroups->removeElement($likepostgroup)) {
+        // set the owning side to null (unless already changed)
+        if ($likepostgroup->getUserid() === $this) {
+            $likepostgroup->setUserid(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Commentgrouppost>
+ */
+public function getCommentgroupposts(): Collection
+{
+    return $this->commentgroupposts;
+}
+
+public function addCommentgrouppost(Commentgrouppost $commentgrouppost): static
+{
+    if (!$this->commentgroupposts->contains($commentgrouppost)) {
+        $this->commentgroupposts->add($commentgrouppost);
+        $commentgrouppost->setUserid($this);
+    }
+
+    return $this;
+}
+
+public function removeCommentgrouppost(Commentgrouppost $commentgrouppost): static
+{
+    if ($this->commentgroupposts->removeElement($commentgrouppost)) {
+        // set the owning side to null (unless already changed)
+        if ($commentgrouppost->getUserid() === $this) {
+            $commentgrouppost->setUserid(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Votecomment>
+ */
+public function getVotecomments(): Collection
+{
+    return $this->votecomments;
+}
+
+public function addVotecomment(Votecomment $votecomment): static
+{
+    if (!$this->votecomments->contains($votecomment)) {
+        $this->votecomments->add($votecomment);
+        $votecomment->setUserid($this);
+    }
+
+    return $this;
+}
+
+public function removeVotecomment(Votecomment $votecomment): static
+{
+    if ($this->votecomments->removeElement($votecomment)) {
+        // set the owning side to null (unless already changed)
+        if ($votecomment->getUserid() === $this) {
+            $votecomment->setUserid(null);
+        }
+    }
+
+    return $this;
+}
+
+/**
+ * @return Collection<int, Notification>
+ */
+public function getNotifications(): Collection
+{
+    return $this->notifications;
+}
+
+public function addNotification(Notification $notification): static
+{
+    if (!$this->notifications->contains($notification)) {
+        $this->notifications->add($notification);
+        $notification->setUsertonotifie($this);
+    }
+
+    return $this;
+}
+
+public function removeNotification(Notification $notification): static
+{
+    if ($this->notifications->removeElement($notification)) {
+        // set the owning side to null (unless already changed)
+        if ($notification->getUsertonotifie() === $this) {
+            $notification->setUsertonotifie(null);
+        }
+    }
+
+    return $this;
+}
+
 }

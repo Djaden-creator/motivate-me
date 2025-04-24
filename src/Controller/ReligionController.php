@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Entity\User;
+use App\Entity\Message;
 use App\Entity\Religion;
 use App\Entity\Motivateur;
 use App\Form\ReligionType;
@@ -25,6 +26,12 @@ final class ReligionController extends AbstractController
 
         $user = $security->getUser()->getUserIdentifier();
         $users=$entityManagerInterface->getRepository(User::class)->find($this->getUser());
+         // this code is to get all message unread for the user
+         $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
        // this code is about to fetch all demande of user not yet threated by the admin new demande 
         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
 
@@ -81,7 +88,8 @@ final class ReligionController extends AbstractController
             'religionform' => $form,
             'users'=>$users,
             'demandes'=>$demandes,
-            'validedemandes'=>$validedemandes  // this variable is to check if the user has a valid demande to add article  // or not  // the demande of user is accepted he has to see the add article button etc... to add article  // and he can't add article if he doesn't have a valid demande of user.  // this variable is to check if the user has a valid demande to add article  // or not
+            'validedemandes'=>$validedemandes,  // this variable is to check if the user has a valid demande to add article  // or not  // the demande of user is accepted he has to see the add article button etc... to add article  // and he can't add article if he doesn't have a valid demande of user.  // this variable is to check if the user has a valid demande to add article  // or not
+            'unreadmessage'=> $getunread,
         ]);
     }
 
@@ -92,6 +100,12 @@ final class ReligionController extends AbstractController
         $religion = $entityManagerInterface->getRepository(Religion::class)->find($id);
          // this code is about to fetch all demande of user not yet threated by the admin new demande 
         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
+        // this code is to get all message unread for the user
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
 
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);      
@@ -105,7 +119,8 @@ final class ReligionController extends AbstractController
                 'religion'=> $religion,
                 'users'=>$users,
                 'demandes'=>$demandes,
-                'validedemandes'=>$validedemandes  // this variable is to check if the user has a valid demande to add article  // or not  // the demande of user is accepted he has to see the add article button etc... to add article  // and he can't add article if he doesn't have a valid demande of user.  // this variable is to check if the user has a valid demande to add article  // or not                              
+                'validedemandes'=>$validedemandes,
+                'unreadmessage'=> $getunread  // this variable is to check if the user has a valid demande to add article  // or not  // the demande of user is accepted he has to see the add article button etc... to add article  // and he can't add article if he doesn't have a valid demande of user.  // this variable is to check if the user has a valid demande to add article  // or not                              
             ]);
         }
 }
