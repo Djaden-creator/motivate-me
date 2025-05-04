@@ -23,6 +23,9 @@ class GoController extends AbstractController
          //this code allow us to get all inquiry not responded with the status of null
         $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
 
+        //this code is to get all demandes of user to become a motivator
+        $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
         // this code is to get all message unread for the user
         $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
             'usertwo'=>$this->getUser(),
@@ -35,6 +38,7 @@ class GoController extends AbstractController
             'validedemandes'=>$validedemandes,
             'getallinquery'=>$getallinquery,
             'unreadmessage'=> $getunread,
+            'demandes'=>$demandes,
         ]);
     }
 }

@@ -7,22 +7,26 @@
       {% for getuser in getusers %}
         <h3 class="pb-2 border-bottom d-flex">
           <img src="{{asset(getuser.getImagepath)}}" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 2px black;object-fit:cover"> 
-          <span style="margin-top:1px; margin-left:5px;">{{getuser.username}} </span> &nbsp;&nbsp;
+          <span style="margin-top:1px; margin-left:5px;">{{getuser.username}} 
+           {% if getuser.badgemotivator == 'motivator' %}
+            <small class="text-success"><i class="fa-solid fa-certificate"></i></small>
+           {% endif %}
+          </span> &nbsp;&nbsp;
           
           <button style="border-radius:40px;" class="btn btn-secondary">																			
             {% if app.user.isFollowing(getuser) %}
-              <img src="{{ asset(app.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
-              <a  href="{{ path('follow_user',{'id':getuser.id})}}" class="text-light followclick" style="text-decoration: none;color:black;"><small class="showit{{(getuser.id)}}">abonné</small></a>
               <img src="{{ asset(getuser.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+              <a  href="{{ path('follow_user',{'id':getuser.id})}}" class="text-light followclick" style="text-decoration: none;color:black;"><small class="showit{{(getuser.id)}}">abonné</small></a>
+              <img src="{{ asset(app.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
               {% else %}
                 <img src="{{ asset(getuser.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
                   <a  href="{{ path('follow_user',{'id':getuser.id})}}" class="text-light followclick" style="text-decoration: none;"><small class="showit{{(getuser.id)}}">suivre</small></a>&nbsp;&nbsp;&nbsp;
-                  <img src="{{ asset(getuser.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+                  <img src="{{ asset(app.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
             {% endif %}  
 					</button>&nbsp;&nbsp;
           <button style="border-radius:40px;" class="btn btn-outline-secondary btn-sm">																			
             {% if app.user.isFollowing(getuser) %}
-              <img src="{{ asset(app.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+              <img src="{{ asset(getuser.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
               <strong style="font-size: 12px;">
               {{ getuser.offuserfollowers | length }}
               {% if  getuser.offuserfollowers | length >1 %}
@@ -31,7 +35,7 @@
                   follower
               {% endif %}
             </strong>    
-              <img src="{{ asset(getuser.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+              <img src="{{ asset(app.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
               {% else %}
                 <img src="{{ asset(getuser.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
                 <strong style="font-size: 12px;">
@@ -42,7 +46,7 @@
                       follower
                   {% endif %}
                 </strong>    
-                  <img src="{{ asset(getuser.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+                  <img src="{{ asset(app.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
             {% endif %}  
 					</button>
         </h3>

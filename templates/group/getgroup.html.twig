@@ -6,82 +6,94 @@
 {% block body %}
 	<div class="container col-xl-10 col-xxl-8 px-4 py-5">
 		<div class="row  g-lg-5">
-			<div
-				class="col-lg-7 text-lg-start">
+			<div class="col-lg-7 text-lg-start">
 				<h1 class="display-4 fw-bold lh-1 text-body-emphasis mb-3">{{groups.groupname}}</h1>
 				{% if creator is same as(app.user) %}
 					{# form to post #}
-				     {{ include('group/formposter.html.twig') }}
-				    {# form to post end #}
-					{% else %}
-						<div class="alert alert-warning p-2">
-							<p class="text-body-emphasis mb-3 small">
-								you can't submit a post in the group,only the creator of this group who is also a motivator is llowed to submit an idea or a post in this group.
-							</p>
-							<p class="text-body-emphasis mb-3 small">if you have an idea you can share it with the creator or motivator via his mail <b><u>{{themail}}</u></b> so that it can be published in the group</p>
-						</div>					
+					{{ include('group/formposter.html.twig') }}
+					{# form to post end #}
+				{% else %}
+					<div class="alert alert-warning p-2">
+						<p class="text-body-emphasis mb-3 small">
+							you can't submit a post in the group,only the creator of this group who is also a motivator is llowed to submit an idea or a post in this group.
+						</p>
+						<p class="text-body-emphasis mb-3 small">if you have an idea you can share it with the creator or motivator via his mail
+							<b>
+								<u>{{themail}}</u>
+							</b>
+							so that it can be published in the group</p>
+					</div>
 				{% endif %}
-			
+
 				<br>
 				{# post area #}
 				<div class="">
 					{% for allgrouppost in allgrouppost %}
-						<div class="col mb-3 lh-1 text-body-emphasis">						
+						<div class="col mb-3 lh-1 text-body-emphasis">
 							<div class="card shadow-sm">
 								<div class="card-header d-flex">
 									<div class="btn-group">
+
 										<button class="btn btn-secondary btn-sm" type="button">
 											<img src="{{asset(allgrouppost.posterownerid.getImagepath) }}" alt="{{allgrouppost.groupid.groupname}}" width="25" height="25" class="rounded-circle" style="object-fit: cover;">
 											&nbsp;<small>{{ allgrouppost.groupid.groupname }}</small>
 										</button>
 										{% if allgrouppost.posterownerid == app.user %}
-											<button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
-												<span class="visually-hidden">Toggle Dropdown</span>
-											</button>
-											<ul class="dropdown-menu dropdown-menu-dark">
-												<li>
-													<a href="{{ path('app_deletepostgroup',{'id':allgrouppost.id})}}" class="dropdown-item">Delete this post</a>
-												</li>
-												<li>
-													<a href="{{ path('app_editpostgroup',{'id':allgrouppost.id})}}" class="dropdown-item">Edit this post</a>
-												</li>
-												<li>
-													<a class="dropdown-item">Hide this post</a>
-												</li>
-											</ul>&nbsp;
-										{% endif %}	
-										{# to see if the user have readed the post yet #}
-										
-									</div>&nbsp; &nbsp;
+										<button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+											<span class="visually-hidden">Toggle Dropdown</span>
+										</button>
+										<ul class="dropdown-menu dropdown-menu-dark">
+											
+												<button type="button" class="btn btn-sm btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+													<span class="visually-hidden">Toggle Dropdown</span>
+												</button>
+												<ul class="dropdown-menu dropdown-menu-dark">
+													<li>
+														<a href="{{ path('app_deletepostgroup',{'id':allgrouppost.id})}}" class="dropdown-item">Delete this post</a>
+													</li>
+													<li>
+														<a href="{{ path('app_editpostgroup',{'id':allgrouppost.id})}}" class="dropdown-item">Edit this post</a>
+													</li>
+													<li>
+														<a class="dropdown-item">Hide this post</a>
+													</li>
+												</ul>&nbsp;
+											
+										</ul>
+									{% endif %}
+									</div>
 								</div>
 								<a href="{{ path('app_commentgrouppost',{'id':allgrouppost.id})}}" class="tosee">
 									<img src="{{ asset(allgrouppost.getImagepath) }}" class="bd-placeholder-img card-img-top" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveaspectratio="xMidYMid slice" focusable="false">
-								</a>								
+								</a>
 								<div class="card-body">
 									<p class="card-text">{{ allgrouppost.description }}</p>
 									<div class="d-flex justify-content-between align-items-center">
-										<div class="btn-group">		
+										<div class="btn-group">
 											<a href="{{ path('app_likepostgroup',{'id':allgrouppost.id})}}" class="btn btn-sm btn-outline-secondary grouppostlike">
 												{% if allgrouppost.isLikeagrouppost(app.user) %}
 													<i class="fas fa-thumbs-up" aria-hidden="true"></i>
-													{% else %}
+												{% else %}
 													<i class="far fa-thumbs-up" aria-hidden="true"></i>
-												{% endif %}													   
-												 &nbsp;<span class="countaime">{{ allgrouppost.postingroupid | length }}</span> 										   
+												{% endif %}
+												&nbsp;<span class="countaime">{{ allgrouppost.postingroupid | length }}</span>
 											</a>
-											<a href="{{ path('app_commentgrouppost',{'id':allgrouppost.id})}}" class="btn btn-sm btn-outline-secondary"><i class="fa fa-message"></i>&nbsp; {{ allgrouppost.commentgroupposts | length }} </a>
+											<a href="{{ path('app_commentgrouppost',{'id':allgrouppost.id})}}" class="btn btn-sm btn-outline-secondary">
+												<i class="fa fa-message"></i>&nbsp;
+												{{ allgrouppost.commentgroupposts | length }}
+											</a>
 										</div>
 										<small class="text-body-secondary">{{ allgrouppost.date | ago }}</small>
 									</div>
 								</div>
 							</div>
 						</div>
-						{% else %}
-							<div class="col mb-3 lh-1 text-body-emphasis p-2">
-							 <div  class="alert alert-warning">
-                                  sorry this group has no post for now
-							 </div>
+					{% else %}
+						<div class="col mb-3 lh-1 text-body-emphasis p-2">
+							<div class="alert alert-warning">
+								sorry this group has no post for now
 							</div>
+						</div>
 					{% endfor %}
 				</div>
 				{# end post #}
@@ -90,88 +102,101 @@
 			<div class="col-md-10 mx-auto col-lg-5 position-sticky">
 
 				{% if creator is same as(app.user) %}
-				<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" style="width: 380px;overflow-y: auto;">
-					<div class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
-						<svg class="bi pe-none me-2" width="30" height="24">
-							<use xlink:href="#bootstrap"></use>
-						</svg>
-						<div class="input-group rounded w-75">
-							<input type="search" class="form-control rounded youseme" placeholder="Search" aria-label="Search" aria-describedby="search-addon"/>
-							<input type="hidden" class="groupo" value="{{groups.id}}">
+					<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" style="width: 380px;overflow-y: auto;">
+						<div class="d-flex align-items-center flex-shrink-0 p-3 link-body-emphasis text-decoration-none border-bottom">
+							<svg class="bi pe-none me-2" width="30" height="24">
+								<use xlink:href="#bootstrap"></use>
+							</svg>
+							<div class="input-group rounded w-75">
+								<input type="search" class="form-control rounded youseme" placeholder="Search" aria-label="Search" aria-describedby="search-addon"/>
+								<input type="hidden" class="groupo" value="{{groups.id}}">
+							</div>
+						</div>
+						<div class="errrorgoeshere"></div>
+						<div class="list-group list-group-flush border-bottom scrollarea mutehere" style="height: 380px;overflow-y: auto;">
+							{% for alluser in alluser %}
+								<div class="list-group-item list-group-item-action py-3 lh-sm" id="userlight{{ alluser.id }}">
+									<div class="d-flex w-100 align-items-center justify-content-between">
+										{# if the user is a motivator the icon will apear beside his name  #}
+										{% if alluser.badgemotivator =='motivator'%}
+											<strong class="mb-1">{{alluser.username}} <small class="text-success"><i class="fa-solid fa-certificate"></i></small></strong>
+											{% else %}
+												{# else the user is not a motivator no icon  #}
+												<strong class="mb-1">{{alluser.username}} </strong>
+										{% endif %}
+										
+										{% if app.user.isAdding(alluser) %}
+											<input type="hidden" class="groupid" value="{{groups.id}}">
+											<div class="solidme{{ alluser.id }}">
+												<button class="btn btn-danger btn-sm text-light removeme" value="{{ alluser.id }}">remove</button>
+											</div>
+										{% else %}
+											<input type="hidden" class="groupid" value="{{groups.id}}">
+											<div class="solidme{{ alluser.id }}">
+												<button class="btn btn-secondary btn-sm text-light addme" value="{{ alluser.id }}">add</button>
+											</div>
+										{% endif %}
+
+									</div>
+									<div class="col-10 mb-1 small">you can now add thi user into your group by clicking add button</div>
+								</div>
+							{% endfor %}
 						</div>
 					</div>
-					<div class="errrorgoeshere"></div>
-					<div class="list-group list-group-flush border-bottom scrollarea mutehere" style="height: 380px;overflow-y: auto;">
-						{% for alluser in alluser %}
-							<div class="list-group-item list-group-item-action py-3 lh-sm" id="userlight{{ alluser.id }}">
-								<div class="d-flex w-100 align-items-center justify-content-between">
-									<strong class="mb-1">{{alluser.username}}</strong>
-									{% if app.user.isAdding(alluser) %}
-										<input type="hidden" class="groupid" value="{{groups.id}}">
-										<div class="solidme{{ alluser.id }}">
-											<button class="btn btn-danger btn-sm text-light removeme" value="{{ alluser.id }}">remove</button>
-										</div>
-									{% else %}
-										<input type="hidden" class="groupid" value="{{groups.id}}">
-										<div class="solidme{{ alluser.id }}">
-											<button class="btn btn-secondary btn-sm text-light addme" value="{{ alluser.id }}">add</button>
-										</div>
-									{% endif %}
-
-								</div>
-								<div class="col-10 mb-1 small">you can now add thi user into your group by clicking add button</div>
-							</div>
-						{% endfor %}
-					</div>
-				</div>
 				</br>
-				{% endif %}				
+			{% endif %}
 
-				{# here the setting  #}
-				<h6 class="display-4 fw-bold lh-1 text-body-emphasis mb-3" style="font-size: 18px;">settings</h6>
-				<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" style="width: 380px;overflow-y: auto;">
-					<div class="list-group list-group-flush border-bottom scrollarea mutehere" style="height: 380px;overflow-y: auto;">
-						{% if creator is same as(app.user) %}
-							<div class="list-group-item list-group-item-action py-3 lh-sm">
-								<div class="d-flex w-100 align-items-center justify-content-between">
-									<a href="{{ path('app_delete_group',{'id':idgroup})}}"><strong class="mb-1">Delete this Group</strong></a>
-								</div>
-								<div class="col-10 mb-1 small">the creator can also delete this group as he wants</div>
+			{# here the setting  #}
+			<h6 class="display-4 fw-bold lh-1 text-body-emphasis mb-3" style="font-size: 18px;">settings</h6>
+			<div class="d-flex flex-column align-items-stretch flex-shrink-0 bg-body-tertiary" style="width: 380px;overflow-y: auto;">
+				<div class="list-group list-group-flush border-bottom scrollarea mutehere" style="height: 380px;overflow-y: auto;">
+					{% if creator is same as(app.user) %}
+						<div class="list-group-item list-group-item-action py-3 lh-sm">
+							<div class="d-flex w-100 align-items-center justify-content-between">
+								<a href="{{ path('app_delete_group',{'id':idgroup})}}">
+									<strong class="mb-1">Delete this Group</strong>
+								</a>
 							</div>
-							{% else %}
-							<div class="list-group-item list-group-item-action py-3 lh-sm">
-								<div class="d-flex w-100 align-items-center justify-content-between">
-									<a href="{{ path('app_quitgroup',{'id':idgroup})}}"><strong class="mb-1">Quitter le groupe</strong></a>
-								</div>
-								<div class="col-10 mb-1 small">you can also quit your group</div>
+							<div class="col-10 mb-1 small">the creator can also delete this group as he wants</div>
+						</div>
+					{% else %}
+						<div class="list-group-item list-group-item-action py-3 lh-sm">
+							<div class="d-flex w-100 align-items-center justify-content-between">
+								<a href="{{ path('app_quitgroup',{'id':idgroup})}}">
+									<strong class="mb-1">Quitter le groupe</strong>
+								</a>
 							</div>
-						{% endif %}
-							
-							<div class="list-group-item list-group-item-action py-3 lh-sm">
-								<div class="d-flex w-100 align-items-center justify-content-between">
-									<a href="{{ path('app_allmembers',{'id':idgroup}) }}"><strong class="mb-1">Les membres du groupe</strong></a>
-								</div>
-								<div class="col-10 mb-1 small">here you can see members</div>
-							</div>
-							<div class="list-group-item list-group-item-action py-3 lh-sm">
-								<div class="d-flex w-100 align-items-center justify-content-between">
-									<a href="{{ path('app_gouppost',{'id':idgroup}) }}"><strong class="mb-1">articles du groupe</strong></a>
-								</div>
-								<div class="col-10 mb-1 small">you can view all articles posted in this group</div>
-							</div>
+							<div class="col-10 mb-1 small">you can also quit your group</div>
+						</div>
+					{% endif %}
+
+					<div class="list-group-item list-group-item-action py-3 lh-sm">
+						<div class="d-flex w-100 align-items-center justify-content-between">
+							<a href="{{ path('app_allmembers',{'id':idgroup}) }}">
+								<strong class="mb-1">Les membres du groupe</strong>
+							</a>
+						</div>
+						<div class="col-10 mb-1 small">here you can see members</div>
+					</div>
+					<div class="list-group-item list-group-item-action py-3 lh-sm">
+						<div class="d-flex w-100 align-items-center justify-content-between">
+							<a href="{{ path('app_gouppost',{'id':idgroup}) }}">
+								<strong class="mb-1">articles du groupe</strong>
+							</a>
+						</div>
+						<div class="col-10 mb-1 small">you can view all articles posted in this group</div>
 					</div>
 				</div>
-				{# end setting #}
 			</div>
+			{# end setting #}
 		</div>
 	</div>
-{% endblock %}
-{% block javascripts %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
-	<!-- Bootstrap core JavaScript -->
+</div>{% endblock %}{% block javascripts %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+<!-- Bootstrap core JavaScript -->
 
-	 <script>
+ <script>
 			        // adding the user in the group
 			        $(document).ready(function(){
 			            // add code here
@@ -288,5 +313,4 @@
 				})
 			});
 			});
-			</script>
-{% endblock %}
+			</script>{% endblock %}

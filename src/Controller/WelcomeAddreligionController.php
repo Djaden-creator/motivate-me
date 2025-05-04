@@ -1,6 +1,9 @@
 <?php
 namespace App\Controller;
 use App\Entity\User;
+use App\Entity\Article;
+use App\Entity\Contact;
+use App\Entity\Message;
 use App\Entity\Motivateur;
 use App\Repository\UserRepository;
 use App\Form\WelcomeAddreligionType;
@@ -26,6 +29,22 @@ public function index(Request $request,SluggerInterface $slugger,ManagerRegistry
         
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$em->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
+
+        $getarticle=$em->getRepository(Article::class)->findBy(['userposter'=>$users],['id'=>'DESC'],1);
+        //this cose is to fetch and count all demande not yet accepted by the admin
+        $demandes=$em->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+        
+        // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+        $validedemandes=$em->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
+
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
+
+        // this code is to get all message unread for the user
+        $getunread=$em->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
 
         $form = $this->createForm(WelcomeAddreligionType::class, $users);
         $form->handleRequest($request);
@@ -80,7 +99,12 @@ public function index(Request $request,SluggerInterface $slugger,ManagerRegistry
         return $this->render('welcome_addreligion/index.html.twig', [
             'form' => $form->createView(),
             'users'=>$users,
-            'validedemandes'=>$validedemandes
+            'validedemandes'=>$validedemandes,
+            'demandes'=>$demandes,
+            'validedemandes'=>$validedemandes,
+            'getarticles'=>$getarticle,
+            'unreadmessage'=>$getunread,
+            'getallinquery'=>$getallinquery,
         ]);
     }
 }

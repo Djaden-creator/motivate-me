@@ -51,7 +51,14 @@
 									{% else %}
 										Comment
 									{% endif %}
-								</small>
+								</small> &nbsp;&nbsp;
+								{% if articlesbyids.status == 'free' %}	
+									<span title="download">
+										<a href="{{ path('app_fichier_pdf',{id:articlesbyids.id}) }}" style="color:black;text-decoration:none">
+											<i class="fa-solid fa-download"></i> {{ articlesbyids.download }}
+										</a>                       
+									</span>
+									{% endif %}
 							</div>
 
 						{% else %}
@@ -149,7 +156,14 @@
 													Comment
 													{{ article.getComment|length }}
 												{% endif %}
-											</span>
+											</span>&nbsp;&nbsp;
+											{% if article.status == 'free' %}	
+												<span title="download">
+													<a href="{{ path('app_fichier_pdf',{id:article.id}) }}" style="color:black;text-decoration:none">
+														<i class="fa-solid fa-download"></i> {{ article.download }}
+													</a>                       
+												</span>
+												{% endif %}
 										</div>
 										<small class="text-body-secondary">{{ article.createAt | ago }}</small>
 									</div>

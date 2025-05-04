@@ -1,0 +1,30 @@
+{% for all_group in all_groups %}
+	<div class="col col-md-2">
+		<div class="card text-bg-dark rounded-4">
+			<div class="card-body text-center">
+				<img src="{{ asset(all_group.userid.getImagepath) }}" class="text-center" alt="" style="height: 100px;width:100px; border-radius:50px;border:solid 2px black;object-fit:cover">
+				{% if all_group.userid.badgemotivator == 'motivator' %}
+					<h3 class="fw-bold" style="font-size: 18px;">
+						{{ all_group.groupname }}
+					</h3>
+					<h3 class="fw-bold" style="font-size: 18px;">
+						<small style="font-size: 12px;">Creator:
+							{{ all_group.userid.username }}</small>
+						<small class="text-success" style="font-size: 12px;">
+							<i class="fa-solid fa-certificate"></i>
+						</small>
+					</h3>
+					{% if all_group.isDemande(app.user) %}
+						<h4 class="makeon{{all_group.id}}" style="font-size: 12px;">
+							<a href="{{ path('app_addmyself_in_agroup',{'id':all_group.id})}}" class="btn btn-danger demandon" style="font-size: 12px;">you are in the group</a>
+						</h4>
+					{% else %}
+						<h4 class="makeon{{all_group.id}}" style="font-size: 12px;">
+							<a href="{{ path('app_addmyself_in_agroup',{'id':all_group.id})}}" class="btn btn-bd-primary demandon" style="font-size: 12px;">Ask to enter</a>
+						</h4>
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endfor %}

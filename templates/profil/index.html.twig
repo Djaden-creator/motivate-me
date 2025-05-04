@@ -5,9 +5,20 @@
 {% block body %}
     <div class="container px-4 py-5" id="custom-cards">
         <h2 class="pb-2 border-bottom d-flex">
-          <img src="{{users.Imagepath}}" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 2px black;object-fit:cover"> 
-          <span style="margin-top:1px; margin-left:5px;">{{app.user.username}} </span>
-          <a href="{{ path('app_mymotivatorlist') }}" title="listes des motivateurs" class="btn btn-secondary" style="margin-top:1px; margin-left:5px;">
+          {% if app.user.picture == 'none' %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-person-circle" viewbox="0 0 16 16">
+										<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+										<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+						</svg>
+            {% else %}
+              <img src="{{ users.Imagepath }}" alt="" style="height: 50px;width:50px; border-radius:25px;border:solid 2px black;object-fit:cover">
+          {% endif %}
+          {% if users.badgemotivator =='motivator' %}
+            <span style="margin-top:1px; margin-left:5px;">{{users.username}} <small class="text-success"><i class="fa-solid fa-certificate"></i></small> </span>
+            {% else %}
+              <span style="margin-top:1px; margin-left:5px;">{{users.username}} </span>
+          {% endif %}         
+          <a href="{{ path('app_chat_with_motivator') }}" title="listes des motivateurs" class="btn btn-secondary" style="margin-top:1px; margin-left:5px;">
             <strong style="font-size: 12px;">
               entrain de suivre {{ followingcount | length }}
               {% if followingcount | length >1 %}

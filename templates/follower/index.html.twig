@@ -13,18 +13,55 @@
 			</form>
 		</div>
     {# here the div of result ajax  #}
-    <div class="row row-cols-1 search-results">
-		</div>
+    <div class="row row-cols-1 search-results"></div>
     {# end here the div of result ajax  #}
-    <h5 class="mt-3">Mes meilleurs motivateurs</h5>
-		<div class="row row-cols-1 row-cols-lg-3 ">
-			{% for followingcount in followingcounts %}
-				{# here the template of result #}
-				{{include ("follower/resultuser.html.twig")}}
-				{# end  #}
-			{% endfor %}
-		</div>
-	</div>
+    <h6 class="mt-3 text-secondary">
+        {% if app.user.religion =='Christianisme' %}
+          Here are christian motivators of all over the world - follow them
+        {% elseif app.user.religion =='Islam' %}
+            Here are muslim motivators of all over the world - follow them
+        {% endif %}
+    
+      </h6>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-1">
+      {% for motivator in mymotivator %}
+        <div class="col">
+          <div class="card shadow-sm">
+            <img src="{{ asset(motivator.user.getImagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover">
+            {% if motivator.user is same as(app.user) %}
+              <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+                  <img src="{{ asset(motivator.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+              </div>
+              {% else %}
+              <div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+                  <img src="{{ asset(motivator.user.getImagepath) }}"  width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
+                  {% if app.user.isFollowing(motivator.user) %}
+                      <a  href="{{ path('follow_user',{'id':motivator.user.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(motivator.user.id)}}">tu suis deja ce motivateur</strong></a>&nbsp;&nbsp;&nbsp;
+                      {% else %}
+                          <a  href="{{ path('follow_user',{'id':motivator.user.id})}}" class="text-light followclick" style="text-decoration: none;"><strong class="showit{{(motivator.user.id)}}">suivre</strong></a>&nbsp;&nbsp;&nbsp;
+                  {% endif %}
+                  <img src="{{ asset(app.user.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+              </div>                   
+              {% endif %}           
+            <div class="card-body">
+              <p class="card-text">{{motivator.titre|upper }}&nbsp;: <small class="">{{motivator.leadername|upper }}</small>, &nbsp; CHURCH:  <small class="">{{motivator.etablissement|upper }}</small></p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <a href="{{ path('app_motivator_profil',{'id':motivator.user.id}) }}" class="btn btn-sm btn-outline-secondary">voir son profil</a>
+                </div>
+                {% if motivator.user.badgemotivator == 'motivator' %}
+                  <small class="text-body-secondary">motivator<small class="text-success p-1"><i class="fa-solid fa-certificate"></i></small> depuis {{motivator.date | ago}}</small>
+                  {% else %}
+                    <small class="text-body-secondary">user since {{motivator.date | ago}}</small>
+                {% endif %}
+               
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+     
+    </div>
 {% endblock %}
 {% block javascripts %} 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -44,14 +81,40 @@
               method: 'GET',
               data: { query: query },
               success: function (data) {
-                  $('.search-results').html(data);                
+                  $('.search-results').html(data);          
               }
           });
-      }
+      }else if(query.length ==''){
+        $('.search-results').html(''); 
+        }
       else{
         $('.search-results').html('<h3 class="text-danger" style="font-size: 15px;margin-left:0px;">sorry the user you are tryin to search for he is not a motivator</h3>');      
       } 
     });
+
+    //this code is used to follow the user and to unfollow the user
+    $(document).on('click','.followclick',function(e){
+      e.preventDefault();
+      // url that we want to use
+      let urls=this.href;
+      console.log(urls);
+      // this function is to extract the id from  the urls
+      function getidfromurl(urls){
+        let segment =urls.split("/");
+        return segment.pop() || segment.pop();
+      }
+      // and here is the id extracted from the urls
+      let id=getidfromurl(urls);
+      $.ajax({
+        url:urls,
+        type:'POST',
+        data:$(this).serialize(),
+        success:function(data)
+        {
+          $('.showit' + id).html(data.message);
+        }
+      })			
+     })
    
         
    }) 

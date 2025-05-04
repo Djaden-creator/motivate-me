@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Article;
+use App\Entity\Contact;
 use App\Entity\Message;
 use App\Entity\Motivateur;
 use App\Form\ArticleformType;
@@ -16,8 +17,8 @@ use function PHPUnit\Framework\throwException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -45,6 +46,9 @@ class NewArticleController extends AbstractController
             'usertwo'=>$this->getUser(),
             'status'=>"unread",
           ]);
+
+           //this code allow us to get all inquiry not responded with the status of null
+           $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
           
         $article = new Article();
         $form = $this->createForm(ArticleformType::class, $article);
@@ -99,7 +103,8 @@ class NewArticleController extends AbstractController
             'users'=>$userforuser,
             'demandes'=>$demandes,
             'validedemandes'=>$validedemandes,
-            'unreadmessage'=>$getunread
+            'unreadmessage'=>$getunread,
+            'getallinquery'=>$getallinquery 
         ]);
     }
 
@@ -123,7 +128,10 @@ class NewArticleController extends AbstractController
             'usertwo'=>$this->getUser(),
             'status'=>"unread",
           ]);
-          
+        
+          //this code allow us to get all inquiry not responded with the status of null
+          $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+
         $article = new Article();
         $form = $this->createForm(ArticlemotivatorType::class, $article);
         $form->handleRequest($request);
@@ -179,7 +187,8 @@ class NewArticleController extends AbstractController
             'users'=>$userforuser,
             'demandes'=>$demandes,
             'validedemandes'=>$validedemandes,
-            'unreadmessage'=>$getunread
+            'unreadmessage'=>$getunread,
+            'getallinquery'=>$getallinquery 
         ]);
     }
 }

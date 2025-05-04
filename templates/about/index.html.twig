@@ -11,58 +11,81 @@
 				<div class="p-5 text-bg-dark rounded-3">
 					<h2>Faites votre premiere demande</h2>
 					<p>Pour devenir un Motivator, il suffit juste de remplir un formulaire en cliquant sur le bouton motivate me juste en bas</p>
-					<a href="{{ path('app_motivator') }}" class="btn btn-outline-light">MotivateMe</a>
+					{% if app.user %}
+						<a href="{{ path('app_motivator') }}" class="btn btn-outline-light">MotivateMe</a>
+					{% else %}
+						<a href="{{ path('app_login') }}" class="btn btn-outline-light">Login</a>
+					{% endif %}
+
 				</div>
 				{# faire une demande end #}
 
 				{# contact us #}
 				<div class="p-5 text-bg-dark rounded-3 mt-2">
 					<h2>Nous contacter</h2>
-					<p>pour nous ecrire veuillez remplir le formulaire en cliquant sur la touche Get in touch</p>
-					<a href="{{ path('contactus') }}" class="btn btn-outline-light">Get in touch</a>
+					{% if app.user %}
+						<p>pour nous ecrire veuillez remplir le formulaire en cliquant sur la touche Get in touch</p>
+						<a href="{{ path('contactus') }}" class="btn btn-outline-light">Get in touch</a>
+					{% else %}
+						<p>si vous n'avez pas encore de compte sur motivateMe,contactez nous sur notre email</p>
+						<strong class="btn btn-outline-light">
+							<u>djadenkibelisa@gmail.com</u>
+						</strong>
+					{% endif %}
+
 				</div>
 				{# contact us end #}
 			</div>
 			<div class="col-8 col-sm-8 col-lg-8">
 				<h1 class="display-6 fw-bold lh-1 mb-3">About MotivateMe</h1>
-				<p style="font-size: 15px;">La plateforme fonctionne de la maniere suivante:
+				<p style="font-size: 15px;">La plateforme fonctionne de la maniere suivante:</p>
+				<p>
+					
+							un utilisateur crée son espace en determinant sa religion ou position religieuse,vous 
+							            verrez que les articles de votre religion sans cela vous ne serez pas a mesure de like,
+							            commenter,sauvegarder etc ... vous ne verrez aucun article. 
+							            Un utilisateur n' a pas la possibilité de créer un article ou de poster. Pour commencer a créer de contenu veuillez bien lire le rubrique
+							<U>Comment devenir un motivateur.</U>
+						
 				</p>
 				<p>
 					<ul class="">
-						<li class="list-group-item"><strong>1. Pour les Utilisateurs:</strong> un utilisateur crée son espace en determinant sa religion ou position religieuse,vous 
-            verrez que les articles de votre religion sans cela vous ne serez pas a mesure de like,
-            commenter,sauvegarder etc ... vous ne verrez aucun article. 
-            Un utilisateur n' a pas la possibilité de créer un article ou de poster. Pour commencer a créer de contenu veuillez bien lire le rubrique <U>Comment devenir un motivateur.</U> 
-            </li>
-						<li class="list-group-item"><strong>2. Pour les Motivators:</strong> Un account Motivator est celui qui a reçu un numero MotivateMe, cet account peut créer
-             de contenu ou des articles pour encourager les peuples de Dieu selon sa religion,seul les
-              utilisateurs qui partagent la meme religion avec cet account pourrons
-               liker,commenter etc... les articles postés par celui ci.
-            </li>
-			  </p>
+						<li class="list-group-item">
+							<strong>1. Pour les Utilisateurs:</strong>
+							un utilisateur crée son espace en determinant sa religion ou position religieuse,vous 
+							            verrez que les articles de votre religion sans cela vous ne serez pas a mesure de like,
+							            commenter,sauvegarder etc ... vous ne verrez aucun article. 
+							            Un utilisateur n' a pas la possibilité de créer un article ou de poster. Pour commencer a créer de contenu veuillez bien lire le rubrique
+							<U>Comment devenir un motivateur.</U>
+						</li>
+						<li class="list-group-item">
+							<strong>2. Pour les Motivators:</strong>
+							Un account Motivator est celui qui a reçu un numero MotivateMe, cet account peut créer
+							             de contenu ou des articles pour encourager les peuples de Dieu selon sa religion,seul les
+							              utilisateurs qui partagent la meme religion avec cet account pourrons
+							               liker,commenter etc... les articles postés par celui ci.
+						</li>
+					</ul>
+				</p>
+				<p>la plateforme a été conçue pour la gloire de Dieu.Pour que les enfants de Dieu,le createur de toute chose,soient enseigné et réleveé par la foi.
+					<strong>c'est pour la gloire de Dieu que nous faisons ça.
+					</strong>
+				</p>
+				<h1 class="display-6 fw-bold lh-1 mb-3">Comment devenir un motivateur</h1>
+				<p style="font-size: 15px;">
+					Un Motivateur est celui qui a tout le droits de créer le contenu c.à.d il créé les articles et le non motivator aimeront,commenteront,sauvegarderont etc..ceux qui auront le numero Motivator
+									aurons le droits de creer le contenus sur la plateforme.
+				</p>
+				<p>
+					le numero Motivator est delivré par le service MotivateMe aprés avoir validé votre demande. tout le monde peut devenir motivateur, mais si seulement votre dossier ou demande est validée.
+				</p>
+				<h1 class="display-6 fw-bold lh-1 mb-3" style="font-size: 18px;">Ce que vous devez connaitre avant de faire une demande</h1>
+				<ul class="">
+					<li class="list-group-item">1. assurez-vous que vous etes le representant(pasteur,imam etc..) legal de votre ensemble(eglise,mosquée etc..).</li>
+					<li class="list-group-item">2. assurez-vous que votre organisation a un numero unique enregistré par le service d'etat de votre region ou pays. toutes ces pieces nous serons utiles pour vous faire une verification officielle.</li>
+				</ul>
 
-        <p>la plateforme a été conçue pour la gloire de Dieu.Pour que les enfants de Dieu,le createur de toute chose,soient enseigné et réleveé par la foi. <strong>c'est pour la gloire de Dieu que nous faisons ça. </strong></p>
-			<h1 class="display-6 fw-bold lh-1 mb-3">Comment devenir un motivateur</h1>
-			<p style="font-size: 15px;">
-				Un Motivateur est celui qui a tout le droits de créer le contenu c.à.d il créé les articles et le non motivator aimeront,commenteront,sauvegarderont etc..ceux qui auront le numero Motivator
-				aurons le droits de creer le contenus sur la plateforme.
-			</p>
-			<p>
-				le numero Motivator est delivré par le service MotivateMe aprés avoir validé votre demande. tout le monde peut devenir motivateur, mais si seulement votre dossier ou demande est validée.
-			</p>
-			<h1 class="display-6 fw-bold lh-1 mb-3" style="font-size: 18px;">Ce que vous devez connaitre avant de faire une demande</h1>
-			<ul class="">
-				<li class="list-group-item">1. assurez-vous que vous etes le representant(pasteur,imam etc..) legal de votre ensemble(eglise,mosquée etc..).</li>
-				<li class="list-group-item">2. assurez-vous que votre organisation a un numero unique enregistré par le service d'etat de votre region ou pays. toutes ces pieces nous serons utiles pour vous faire une verification officielle.</li>
-			</ul>
-			<p>
-
-				<div class="p-5 text-bg-light rounded-3">
-					<h2>Faites votre premiere demande</h2>
-					<p>Pour devenir un Motivator, il suffit juste de remplir un formulaire en cliquant sur le bouton motivate me juste en bas</p>
-					<a href="{{ path('app_motivator') }}" class="btn btn-outline-dark">MotivateMe</a>
-				</div>
-			</p>
+			</div>
 		</div>
 	</div>
-</div>{% endblock %}
+{% endblock %}

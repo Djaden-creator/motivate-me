@@ -8,14 +8,11 @@ use App\Entity\User;
 use App\Entity\Contact;
 use App\Entity\Message;
 use App\Entity\Following;
-use App\Form\MessageType;
-use Doctrine\ORM\Mapping\OrderBy;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class ChatController extends AbstractController

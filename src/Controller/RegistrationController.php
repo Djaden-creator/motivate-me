@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Controller;
-
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class RegistrationController extends AbstractController
 {
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager,MailerInterface $mailer): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -29,10 +30,20 @@ class RegistrationController extends AbstractController
                  ->setSince( new \DateTime())
                  ->setReligion('none')
                  ->setPicture('none')
-                 ->setRoles(['ROLE_USER']);
+                 ->setRoles(['ROLE_USER'])
+                 ->setBadgemotivator('nonne');
 
             $entityManager->persist($user);
             $entityManager->flush();
+            dump($user->getEmail());
+            // 3. Send email
+            $email = (new Email())
+            ->from('djadenkibelisa@gmail.com')
+            ->to($user->getEmail())
+            ->subject('Welcome to Our Website!')
+            ->html('<p>Thank you for registering with us!</p>');
+
+            $mailer->send($email);
 
             // do anything else you need here, like send an email
 

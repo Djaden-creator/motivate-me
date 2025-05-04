@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Entity\User;
+use App\Entity\Contact;
 use App\Entity\Message;
 use App\Entity\Religion;
 use App\Entity\Motivateur;
@@ -38,6 +39,9 @@ final class ReligionController extends AbstractController
        // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
         
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+
         $religion= new Religion();
         $form = $this->createForm(ReligionType::class, $religion);
         $form->handleRequest($request);
@@ -90,6 +94,7 @@ final class ReligionController extends AbstractController
             'demandes'=>$demandes,
             'validedemandes'=>$validedemandes,  // this variable is to check if the user has a valid demande to add article  // or not  // the demande of user is accepted he has to see the add article button etc... to add article  // and he can't add article if he doesn't have a valid demande of user.  // this variable is to check if the user has a valid demande to add article  // or not
             'unreadmessage'=> $getunread,
+            'getallinquery'=>$getallinquery, // this variable is to check if the user has a valid demande to add article  // or not  // the demande of user is accepted he has to see the add article button etc... to add article  // and he can't add article if he doesn't have a valid demande of user.  // this variable is to check if the user has a valid demande to add article  // or not
         ]);
     }
 
@@ -110,6 +115,9 @@ final class ReligionController extends AbstractController
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);      
            
+        //this code allow us to get all inquiry not responded with the status of null
+        $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+       
         if (!$religion) {
                 throw $this->createNotFoundException(
                     'No product found for id '.$id
@@ -120,7 +128,8 @@ final class ReligionController extends AbstractController
                 'users'=>$users,
                 'demandes'=>$demandes,
                 'validedemandes'=>$validedemandes,
-                'unreadmessage'=> $getunread  // this variable is to check if the user has a valid demande to add article  // or not  // the demande of user is accepted he has to see the add article button etc... to add article  // and he can't add article if he doesn't have a valid demande of user.  // this variable is to check if the user has a valid demande to add article  // or not                              
+                'unreadmessage'=> $getunread,
+                'getallinquery'=>$getallinquery  // this variable is to check if the user has a valid demande to add article  // or not  // the demande of user is accepted he has to see the add article button etc... to add article  // and he can't add article if he doesn't have a valid demande of user.  // this variable is to check if the user has a valid demande to add article  // or not                              
             ]);
         }
 }

@@ -1,0 +1,154 @@
+{% for article in articles %}
+	<div class="col">
+		<div class="card shadow-sm">
+			{% if article.status == 'free' %}
+				{% if app.user %}
+					<a href="{{ path('app_item',{'id':article.id})}}"><img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
+				{% else %}
+					<a href="{{ path('app_login') }}"><img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover"></a>
+				{% endif %}
+
+				{% if article.userposter is same as(app.user) %}
+					<div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+						<img src="{{ asset(article.userposter.getImagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+					</div>
+				{% else %}
+					<div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+						<img src="{{ asset(article.userposter.getImagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
+						{% if app.user.isFollowing(article.userposter) %}
+							<a href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;">
+								<strong class="showit{{(article.userposter.id)}}">abonné</strong>
+							</a>&nbsp;&nbsp;&nbsp;
+						{% else %}
+							<a href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;">
+								<strong class="showit{{(article.userposter.id)}}">suivre</strong>
+							</a>&nbsp;&nbsp;&nbsp;
+						{% endif %}
+						<img src="{{ asset(article.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+					</div>
+				{% endif %}
+			{% else %}
+				{% if article.userposter is same as(app.user) %}
+					<div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+						<img src="{{ asset(article.userposter.getImagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+					</div>
+				{% else %}
+					<div class="d-flex p-1 bg-secondary followpropagation" style="position: absolute;margin-left:10px;margin-top:10px;border-radius:25px;border:border:2px solid black">
+						<img src="{{ asset(article.userposter.getImagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">&nbsp;&nbsp;&nbsp;
+						{% if app.user.isFollowing(article.userposter) %}
+							<a href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;">
+								<strong class="showit{{(article.userposter.id)}}">abonné</strong>
+							</a>&nbsp;&nbsp;&nbsp;
+						{% else %}
+							<a href="{{ path('follow_user',{'id':article.userposter.id})}}" class="text-light followclick" style="text-decoration: none;">
+								<strong class="showit{{(article.userposter.id)}}">suivre</strong>
+							</a>&nbsp;&nbsp;&nbsp;
+						{% endif %}
+						<img src="{{ asset(article.Imagepath) }}" width="30" height="30" style="object-fit:cover;border-radius:15px;border:2px solid white">
+					</div>
+				{% endif %}
+				<img src="{{ asset(article.Imagepath) }}" class="card-img-top" width="200" height="300" style="object-fit:cover">
+			{% endif %}
+			<div class="card-body">
+				{% if article.status == 'free' %}
+					<strong class="text-success">Gratuit</strong>
+					{% if article.vue == null %}
+						<small>(cet article n'a aucune vue pour le moment)
+						</small>
+
+					{% else %}
+						<small>(cet article a été lu
+							<u>{{ article.vue }}
+								fois
+							</u>)
+						</small>
+					{% endif %}
+
+
+				{% else %}
+					<strong>{{ article.price}}
+						Eur</strong>
+					<small>(<u>{{ article.commandes | length }}
+							{% if  article.commandes | length > 1 %}
+								exemplaires vendus
+							{% else %}
+								exemplaire vendu
+							{% endif %}
+						</u>)
+					</small>
+				{% endif %}
+				<p class="card-text" style="font-size: 15px;">{{ article.title|u.truncate(50,'...') }}</p>
+				<div class="d-flex justify-content-between align-items-center">
+					<div class="btn-group">
+						{% if app.user == article.userposter %}
+							<a href="{{ path('app_update',{'id':article.id})}}" class="btn btn-sm btn-outline-secondary">
+								<i class="fa fa-pencil" aria-hidden="true"></i>
+							</a>
+							<a href="{{ path('app_delete',{'id':article.id}) }}" class="btn btn-sm btn-outline-secondary">
+								<i class="fa fa-trash" aria-hidden="true"></i>
+							</a>
+
+						{% endif %}
+
+						{% if article.status == 'free' %}
+							{% if app.user %}
+								<a href="{{ path('app_item',{'id':article.id}) }}" class="btn btn-sm btn-outline-secondary">read</a>
+							{% else %}
+								<a href="{{ path('app_login') }}" class="btn btn-sm btn-outline-secondary">read</a>
+							{% endif %}
+
+						{% else %}
+							{% if app.user %}
+								<a href="{{ path('app_article_cart',{id:article.id}) }}" class="btn btn-sm btn-warning">Ajouter</a>
+							{% else %}
+								<a href="{{ path('app_login') }}" class="btn btn-sm btn-warning">Ajouter</a>
+							{% endif %}
+						{% endif %}
+					</div>
+					<div class="btn-group">
+						<small class="parent-show{{ article.id }}"></small>
+						<a href="{{ path('likeitem',{'id':article.id}) }}" class="allclicks" style="color:black;text-decoration:none">
+							{% if app.user and article.IslikeByUser(app.user) %}
+								<i class="fas fa-thumbs-up" aria-hidden="true"></i>
+							{% else %}
+								<i class="far fa-thumbs-up" aria-hidden="true"></i>
+							{% endif %}
+							<span class="countlike">{{ article.articlelikes | length }}</span>
+						</a>&nbsp;&nbsp;
+						<span>
+							<i class="fa fa-message"></i>
+							{{ article.getComment|length }}
+						</span>&nbsp;&nbsp;
+						<span>
+							<a href="{{ path('app_sauvegard',{'id':article.id}) }}" class="sauvegarder" style="color:black;text-decoration:none">
+								{% if app.user and article.IsSavedByUser(app.user) %}
+									<i class="fas fa-bookmark"></i>
+								{% else %}
+									<i class="far fa-bookmark"></i>
+								{% endif %}
+								<span class="countsave">{{ article.sauvegardes | length }}</span>
+							</a>
+
+						</span>&nbsp;&nbsp;													
+						{% if article.status == 'free' %}	
+							<span title="download">
+								<a href="{{ path('app_fichier_pdf',{'id':article.id}) }}" style="color:black;text-decoration:none">
+									<i class="fa-solid fa-download"></i> {{ article.download }}
+								</a>                       
+							</span>
+						{% endif %}
+					</div>
+					<small class="text-body-secondary">{{ article.createAt | ago }}</small>
+				</div>
+				{% if article.userposter.badgemotivator == 'motivator' %}
+					<small class="text-secondary">{{article.userposter.username}}
+						<small class="text-success">
+							<i class="fa-solid fa-certificate"></i>
+						</small>
+						&nbsp; -
+						{{article.userposter.religion}}</small>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{%  endfor %}

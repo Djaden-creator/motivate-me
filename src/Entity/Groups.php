@@ -42,6 +42,9 @@ class Groups
     #[ORM\OneToMany(targetEntity: Shareingroup::class, mappedBy: 'groupid')]
     private Collection $shareingroups;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $religion = null;
+
 
     public function __construct()
     {
@@ -160,6 +163,26 @@ class Groups
         }
 
         return $this;
+    }
+
+    public function getReligion(): ?string
+    {
+        return $this->religion;
+    }
+
+    public function setReligion(?string $religion): static
+    {
+        $this->religion = $religion;
+
+        return $this;
+    }
+
+    public function isDemande(User $user)
+    {
+       foreach($this->getAddingroups() as $demande){
+          if($demande->getNewmember() === $user) return true;
+       } 
+       return false;
     }
 
 }

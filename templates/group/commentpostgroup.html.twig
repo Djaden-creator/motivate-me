@@ -30,15 +30,9 @@
 									{{ postgroup.date | date('H:i') }}
 									&nbsp; &nbsp;
 									{# lu or not #}
-									{% for check in check %}
-										{% if check.postid is same as(postgroup) %}
+				
                                             <small class="text-success">article lu par vous <i class="fa-solid fa-circle-check"></i></small>
-											{% else %}
-												pas encore lu
-									   {% endif %}
-									{% endfor %}
-									   
-									   
+			   
 									{# lu or not #}
 								</p>
 								<a href="{{ path('app_likepostgroup',{'id':postgroup.id})}}" class="btn btn-sm btn-outline-secondary grouppostlike">

@@ -5,15 +5,12 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Contact;
 use App\Entity\Message;
-use App\Form\ContactType;
+use App\Entity\Following;
 use App\Entity\Motivateur;
 use App\Form\MotivateurType;
 use App\Entity\Generatorcode;
 use App\Form\GeneratorcodeType;
-use App\Form\ValidedemandeType;
 use App\Form\GivesellercodeType;
-use App\Form\ValidatenumberType;
-use App\Form\GivesellernumberType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -158,15 +155,55 @@ final class MotivatorController extends AbstractController
         ]);
     }
 
-    // here we are updating and giving a user a seller number. we are updating the motivateur table 
+    // to get all the motivator that am following and chat with them
+    #[Route('/chatwithmotivator', name: 'app_chat_with_motivator')]
+    public function getchatwithmotivator(EntityManagerInterface $entityManagerInterface): Response
+    {
+        
+        $users=$this->getUser();
+        $userforuser = $entityManagerInterface->getRepository(User::class)->find($users);
+
+        // this code is to get all message unread for the user
+        $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+            'usertwo'=>$this->getUser(),
+            'status'=>"unread",
+          ]);
+
+        // this code is to get all demande not yet validate by the admin status== traitement encours
+        $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+        
+         //this code allow us to get all inquiry not responded with the status of null
+         $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+
+         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$users,'decision'=>'acceptée']);
+        
+         // we are getting all motivator count that this user online following
+        $followingcounts=$entityManagerInterface->getRepository(Following::class)->findby(['usersessionid'=>$this->getUser()]);
+         return $this->render('motivator/chat_with_motivator.html.twig', [
+            'users'=>$userforuser,
+            'demandes'=>$demandes,
+            'validedemandes'=>$validedemandes,
+            'unreadmessage'=> $getunread,
+            'getallinquery'=>$getallinquery,
+            'followingcounts'=>$followingcounts,
+        ]);
+    }
+
+
+    // here we are updating and giving a user a seller number. we are updating the motivateur table by giving the decision 
     #[Route('/one_user_demande/{id}', name: 'app_single_user_demande')]
     public function singledemande($id,EntityManagerInterface $entityManagerInterface,Request $request,ManagerRegistry $save): Response
     {
         
         $users=$this->getUser();
         $userforuser = $entityManagerInterface->getRepository(User::class)->find($users);
+        //this is the demande of the motivator that we are going to update
         $processing=$entityManagerInterface->getRepository(Motivateur::class)->find($id);
 
+        //here we are getting the user entity who made this demande so can updat his badge in the user table
+        $user_who_made_demande=$processing->getUser();
+       
          // this code is to get all message unread for the user
          $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
             'usertwo'=>$this->getUser(),
@@ -195,16 +232,22 @@ final class MotivatorController extends AbstractController
             $em->persist($processing);
             $em->flush();
                 //then after updating the motif,decision and code seller now  here we are updating the status= disponible to status= used.
-                // used code will not show up in the form when we are giving the code seller to a motivator        
+                // used code will not show up in the form when we are giving the code seller to a motivator
                 if($update){
-                    $update->setStatus('used');    
+                    $update->setStatus('used');
             // Persist and flush the changes
                 $entityManagerInterface->persist($update);
                  $entityManagerInterface->flush();
                 }
+
+            // here we are updating the user table to give him a badge motivator
+                if ($user_who_made_demande) {
+                    $user_who_made_demande->setBadgemotivator('motivator'); 
+                    $entityManagerInterface->flush();
+                }
                 return $this->redirectToRoute('app_user_demande');
             };
-                                             
+                                           
            return $this->render('motivator/single_demande.html.twig', [
             'users'=>$userforuser,
             'demandes'=>$demandes,

@@ -83,6 +83,9 @@ class Article
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $fichier = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $download = null;
+
     public function __construct()
     {
         $this->articlelikes = new ArrayCollection();
@@ -434,6 +437,18 @@ class Article
     public function setFichier(?string $fichier): static
     {
         $this->fichier = $fichier;
+
+        return $this;
+    }
+
+    public function getDownload(): ?string
+    {
+        return $this->download;
+    }
+
+    public function setDownload(?string $download): static
+    {
+        $this->download = $download;
 
         return $this;
     }

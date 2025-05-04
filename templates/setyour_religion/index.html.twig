@@ -10,9 +10,9 @@
             </div>
 		 <div class="col-lg-6 col-md-8 mx-auto">
 		   <h1 class="fw-light">Salut {{ app.user.username }}</h1>
-		   <p class="text-body">Si vous voyez cette page c'est parce que vous n'avez pas encore choisi votre religion,choisissez votre religion en cliquant sur le lien :</p>
+		   <p class="text-body alert alert-warning">Si vous voyez cette page c'est parce que vous n'avez pas encore choisi votre religion,choisissez votre religion en cliquant sur le lien :</p>
 		   <p>
-                <a href="{{ path('app_welcome_addreligion',{'id': app.user.id}) }}" class="btn btn-secondary my-2">Complettez vos details</a>               
+                <a href="{{ path('app_welcome_addreligion',{'id': app.user.id}) }}" class="btn btn-danger my-2">Complettez vos details</a>               
 		   </p>
 		 </div>
 	   </div>

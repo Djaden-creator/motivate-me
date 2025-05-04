@@ -229,6 +229,11 @@
 								</strong>
 							</a>
 						</li>
+						<li>
+							<a href="{{ path('app_chat_with_motivator')}}" class="nav-link px-2 link-light">
+								<strong>Chat with motivator</strong>
+							</a>
+						</li>
 					</ul>
 					{% if app.user %}
 						<div class="col-md-3 text-end">
@@ -236,37 +241,57 @@
 								<a class="btn btn-secondary btn-sm" href="{{ path('app_cart') }}" style="text-decoration: none;">
 									<i class="fa fa-shopping-cart" aria-hidden="true" title="shopping cart"></i>
 								</a>&nbsp;
+								{# here is when you are a motivator these option you will see #}
 								{% if validedemandes %}
 									<button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" width="16" height="16" >
-									<i class="fa fa-plus" title="add new article"></i>
-								</button>
+									    <i class="fa fa-plus" title="add new article"></i>
+								    </button>
 								<ul class="dropdown-menu dropdown-menu-dark">
-									{% if is_granted('ROLE_ADMIN') %}
-										<li>
-											<a title="admin" class="dropdown-item" href="{{ path('app_new_article')}}" style="text-decoration: none;">
-												Create new article
-											</a>
-										</li>
-									{% elseif validedemandes %}
 										<li>
 											<a title="motivator" class="dropdown-item" href="{{ path('app_motivatorarticle')}}" style="text-decoration: none;">
 												Create new article
 											</a>
 										</li>
-									{% endif %}
-									{# end #}
-									<li>
-										<a href="{{ path('app_group') }}" class="dropdown-item">
-											<strong>Create Group</strong>
-										</a>
-									</li>
+										<li>
+											<a href="{{ path('app_group') }}" class="dropdown-item">
+												<strong>Create Group</strong>
+											</a>
+										</li>
 								</ul>
-								{% endif %}				
+								{% endif %}	
+                                {# end of it here is when you are a motivator these option you will see #}
+
+								{# here if you are an admin these are options you will see #}
+								{% if is_granted('ROLE_ADMIN') %}
+									<button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" width="16" height="16" >
+									    <i class="fa fa-plus" title="add new article"></i>
+								    </button>
+								<ul class="dropdown-menu dropdown-menu-dark">
+									
+										<li>
+											<a title="admin" class="dropdown-item" href="{{ path('app_new_article')}}" style="text-decoration: none;">
+												Create new article
+											</a>
+										</li>
+									
+										<li>
+											<a href="{{ path('app_group') }}" class="dropdown-item">
+												<strong>Create Group</strong>
+											</a>
+										</li>
+								</ul>
+								{% endif %}		
+								{# end of it here if you are an admin these are options you will see #}	
 							</div>
 							<div class="btn-group">
 								{% if users.picture != null %}
 									<button class="btn btn-secondary btn-sm" type="button">
-										<img src="{{asset('/' ~ users.Imagepath) }}" alt="ok" width="25" height="25" class="rounded-circle" style="object-fit: cover;">&nbsp;<small>{{ app.user.username }}</small>
+										 {% if users.badgemotivator == 'motivator' %}
+											<img src="{{asset('/' ~ users.Imagepath) }}" alt="ok" width="25" height="25" class="rounded-circle" style="object-fit: cover;">&nbsp;<small>{{ app.user.username }} <small class="text-light"><i class="fa-solid fa-certificate"></i></small></small>
+										 {% else %}
+											<img src="{{asset('/' ~ users.Imagepath) }}" alt="ok" width="25" height="25" class="rounded-circle" style="object-fit: cover;">&nbsp;<small>{{ app.user.username }}</small>
+										 {% endif %}
+										
 									</button>
 								{% else %}
 									<button class="btn btn-secondary btn-sm" type="button">
@@ -288,7 +313,7 @@
 										<a class="dropdown-item" href="{{ path('app_profil') }}">Profil</a>
 									</li>
 									{% if validedemandes %}
-										<li>
+									<li>
 										<a href="{{ path('app_allmygroups') }}" class="dropdown-item">
 											My groups
 										</a>
@@ -306,6 +331,11 @@
 										<li>
 											<a class="dropdown-item" href="{{ path('app_generator') }}">generator motivator code</a>
 										</li>
+										<li>
+										<a href="{{ path('app_allmygroups') }}" class="dropdown-item">
+											My groups
+										</a>
+									</li>
 									{% endif %}
 									<li>
 										<a class="dropdown-item" href="#">Settings</a>
@@ -417,7 +447,7 @@
 			<header class=" bg-dark d-flex flex-wrap align-items-center justify-content-center justify-content-md-between mb-4 border-bottom" style="padding: 20px;">
 				<div class="col-md-3 mb-2 mb-md-0">
 
-					<a href="{{ path('app_blog')}}" class="navbar-brand d-flex align-items-center">
+					<a href="{{ path('app_landing')}}" class="navbar-brand d-flex align-items-center">
 						<svg xmlns="http://www.w3.org/2000/svg" style="color: white;" width="40" height="40" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2" viewbox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
 						<strong style="font-size: 25px;color:white ">Motivate Me</strong>
 					</a>
@@ -429,20 +459,10 @@
 							<strong>Home</strong>
 						</a>
 					</li>
-					<li>
-						<a href="{{ path('app_abonnement') }}" class="nav-link px-2 link-light">
-							<strong>Abonnement</strong>
-						</a>
-					</li>
-					<li>
-						<a href="{{ path('app_new_article')}}" class="nav-link px-2 link-light">
-							<strong>Donate</strong>
-						</a>
-					</li>
-
+					
 					<li>
 						<a href="{{ path('app_about')}}" class="nav-link px-2 link-light">
-							<strong>Knows Us</strong>
+							<strong>About US</strong>
 						</a>
 					</li>
 				</ul>
@@ -455,6 +475,5 @@
 		{% endif %}
 		<!-- ***** Header Area End ***** -->
 		{% block body %}{% endblock %}
-
 	</body>
 </html>

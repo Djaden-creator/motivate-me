@@ -89,7 +89,7 @@ class Notification
         return $this->shareingroupid;
     }
 
-    public function setShareingroupid(?Shareingroup $shareingroupid): static
+    public function setShareingroupid(?Shareingroup $shareingroupid): self
     {
         $this->shareingroupid = $shareingroupid;
 

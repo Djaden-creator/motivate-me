@@ -12,7 +12,7 @@
         <p>
 		 {% for religion in religions %}
 			
-				<div class="col-lg-3 col-md-12 mx-auto">
+				<div class="col-12 col-lg-6 col-md-6 mx-auto">
 					<div class="h-100 p-5 text-bg-dark rounded-3">
 						<img src="{{ asset(religion.Imagepath) }}" width="70" height="70" style="object-fit:cover;border-radius:35px;border:solid 2px white;" alt="Hollywood Sign on The Hill"/>
 					<h2>{{religion.name}}</h2>
@@ -26,7 +26,10 @@
         <div class="h-100 p-5 text-bg-dark rounded-3">
           <h2>Aucune religion disponible</h2>
           <p>Nous vous rappelons que ce site ne dispose aucune religion enregistrée pour le moment. nous excusons pour le désagrement et merci pour votre confiance. we are team God...</p>
-          <a href="{{ path('app_login') }}" class="btn btn-outline-light" >Log in</a>
+		  {% if  is_granted('ROLE_ADMIN')  %}
+			  <a href="{{ path('app_religion') }}" class="btn btn-outline-light" >Add a new religion</a>
+		  {% endif %}
+          
         </div>
       </div>
       <div class="col-md-6">
@@ -40,8 +43,7 @@
 		{% endfor %}
 		{% if app.user %}
 		   <h1 class="fw-light p-3">
-			 <a class="btn btn-secondary" href="">Donate</a> 
-			 <a class="btn btn-danger" href="{{ path('app_abonnement')}}">Abonnement</a>
+			 <a class="btn btn-secondary" href="">Donate to help us grow</a> 
 		   </h1>
 		{% else %}
 			<h1 class="fw-light p-3">

@@ -5,9 +5,17 @@
                 <a href="{{ path('app_motivator_profil',{'id':result.id}) }}" style="text-decoration: none; color:white">
 				<div class="card-body text-center">
 					<img src="{{ asset(result.getImagepath) }}" class="text-center" alt="" style="height: 100px;width:100px; border-radius:50px;border:solid 2px black;object-fit:cover">
-					<h3 class="fw-bold" style="font-size: 18px;">
-						{{ result.username }}
-					</h3>
+					{% if result.badgemotivator == 'motivator' %}
+						<h3 class="fw-bold" style="font-size: 18px;">
+							{{ result.username }} <small class="text-success"><i class="fa-solid fa-certificate"></i></small>
+						</h3>
+						{% else %}
+							<h3 class="fw-bold" style="font-size: 18px;">
+							{{ result.username }}
+						</h3>
+					{% endif %}
+					
+					
 				</div>
                 </a>
 			</div>

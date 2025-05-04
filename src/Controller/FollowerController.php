@@ -10,13 +10,10 @@ use App\Entity\Following;
 use App\Entity\Motivateur;
 use App\Repository\UserRepository;
 use App\Repository\FollowingRepository;
-use App\Repository\MotivateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 final class FollowerController extends AbstractController
@@ -67,6 +64,14 @@ final class FollowerController extends AbstractController
 
         $users=$entityManagerInterface->getRepository(User::class)->find($this->getUser());
 
+        //getting the religion of the user online now 
+        $my_religion=$users->getReligion();
+
+        //getting all motivator with my religion to follow them
+        $my_motivator=$entityManagerInterface->getRepository(Motivateur::class)->findBy([
+          'religion'=>$my_religion
+        ]);
+
         // this code is about to fetch all demande of user not yet threated by the admin new demande
         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
 
@@ -83,16 +88,15 @@ final class FollowerController extends AbstractController
         ]);
         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
-      // we are getting all motivator count that this user online following
-        $followingcounts=$entityManagerInterface->getRepository(Following::class)->findby(['usersessionid'=>$this->getUser()]);
+    
       return $this->render('follower/index.html.twig',[
-        'followingcounts'=>$followingcounts,
         'users' => $users,
         'demandes'=> $demandes,
         'validedemandes'=>$validedemandes,
         'userdemandes'=>$userdemandes,
         'unreadmessage'=> $getunread,
         'getallinquery'=>$getallinquery,
+        'mymotivator'=>$my_motivator
         
       ]);
     }
@@ -138,7 +142,6 @@ final class FollowerController extends AbstractController
     }
 
     // here to search a motivator
-
     #[Route('/search', name: 'search', methods: ['GET'])]
     public function search(Request $request, UserRepository $userRepository,EntityManagerInterface $entityManagerInterface) 
     {

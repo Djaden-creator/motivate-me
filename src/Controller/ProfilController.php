@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
-use App\Entity\Addingroup;
-use App\Entity\Shareingroup;
 use App\Entity\User;
+use App\Entity\Contact;
 use App\Entity\Message;
 use App\Entity\Following;
+use App\Entity\Addingroup;
 use App\Entity\Motivateur;
+use App\Entity\Notification;
+use App\Entity\Shareingroup;
 use App\Repository\MotivateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,6 +41,8 @@ class ProfilController extends AbstractController
          // we are getting all motivator count that this user online following
          $followingcount=$em->getRepository(Following::class)->findby(['usersessionid'=>$this->getUser()]);
         
+       //this code allow us to get all inquiry not responded with the status of null
+       $getallinquery=$em->getRepository(Contact::class)->findBy(['status'=>null]);
 
        return $this->render('profil/index.html.twig', [
             'users' => $users,
@@ -47,6 +51,7 @@ class ProfilController extends AbstractController
             'userdemandes'=>$userdemandes,
             'followingcount'=> $followingcount,
             'unreadmessage'=> $getunread,
+            'getallinquery'=>$getallinquery // on ajoute cette ligne pour afficher les demandes non répondues par l'utilisateur courant  //
         ]);
     }
 
@@ -84,12 +89,12 @@ class ProfilController extends AbstractController
        
          // we are getting all motivator count that this user online following
          $followingcount=$entityManager->getRepository(Following::class)->findby(['usersessionid'=>$this->getUser()]);
-         // here we get the group 
+         // here we get this user  in the adding group means in his group 
          $usergroup=$entityManager->getRepository(Addingroup::class)->findBy([
             'newmember'=>$this->getUser()
         ]);
         if (!empty($usergroup)) {
-            // If $usergroup is not empty, access the first element
+            // If $usergroup is not empty, access the first element means we get is group id 
             $goupenttity = $usergroup[0]->getGroupid();
         
             // Count how many articles are in this group
@@ -97,18 +102,22 @@ class ProfilController extends AbstractController
                 'groupid' => $goupenttity
             ]);
         
-            // Get unseen and seen statuses
-            $status = $entityManager->getRepository(Shareingroup::class)->findBy([
-                'status' => 'unseen',
-                'groupid' => $goupenttity
+            // we get the new post with the notification unread by this user for his group 
+           //we are geting  amm new notification of new post in the group where the user did not yet read it
+            $unreadnotification=$entityManager->getRepository(Notification::class)->findBy([
+                'usertonotifie'=>$users,
+                'IsRead'=>"0",
             ]);
         } else {
             // Handle the case where $usergroup is empty
             $goupenttity = null;
             $countarticle = [];
-            $status = [];
+            $unreadnotification = [];
         }
         
+         //this code allow us to get all inquiry not responded with the status of null
+       $getallinquery=$entityManager->getRepository(Contact::class)->findBy(['status'=>null]);
+      
         return $this->render('profil/mygroup.html.twig',[
             'users' => $users,
             'demandes'=> $demandes,
@@ -118,7 +127,8 @@ class ProfilController extends AbstractController
             'unreadmessage'=> $getunread,
             'mygroups'=>$usergroup,
             'countarticle'=>$countarticle,
-            'status'=>$status
+            'status'=>$unreadnotification,
+            'getallinquery'=>$getallinquery 
         ]);
     }
 }

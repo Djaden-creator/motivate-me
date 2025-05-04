@@ -159,24 +159,29 @@
                 <strong style="font-size: 25px;color:white ">Motivate Me</strong>
             </a>
           <nav class="nav nav-masthead justify-content-center float-md-end">
-            <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="{{ path('app_abonnement')}}">Abonnement</a>            
+            <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="{{ path('app_about')}}">About us</a>            
             <a class="nav-link fw-bold py-1 px-0" href="{{ path('app_profil')}}">
             {% if app.user %}
               <a class="nav-link fw-bold py-1 px-0" href="{{ path('app_logout')}}">Log out</a> &nbsp;
-              {% if users.picture != null %}
-								<button style="" class="btn btn-secondary">									
-										<img src="{{asset('/' ~ users.Imagepath) }}" alt="ok" width="25" height="25" class="rounded-circle" style="object-fit: cover;">&nbsp;<small>{{ app.user.username }}</small>
-								</button>
-								{% else %}
-								<button style="" class="btn btn-secondary">																			
-									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+              {% if users.picture == 'none' %}
+                <button style="" class="btn btn-secondary" type="button" aria-expanded="false">
+									<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewbox="0 0 16 16">
 										<path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
 										<path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
 									</svg>
 									&nbsp;<small>{{ app.user.username }}</small>
 								</button>
+                {% else %}
+								<button  class="btn btn-secondary" type="button" aria-expanded="false">	
+                  {% if users.badgemotivator =='motivator' %}
+                    <img src="{{asset('/' ~ users.Imagepath) }}" alt="ok" width="16" height="16" class="rounded-circle" style="object-fit: cover;">&nbsp;<small>{{ app.user.username }}  <small class="text-light"><i class="fa-solid fa-certificate"></i></small>		</small>
+                  {% else %}
+                    <img src="{{asset('/' ~ users.Imagepath) }}" alt="ok" width="16" height="16" class="rounded-circle" style="object-fit: cover;">&nbsp;<small>{{ app.user.username }}</small>
+                  {% endif %}								
+								</button>
+								
 							{% endif %}
-              {% else %}
+            {% else %}
                
               <nav class="nav nav-masthead justify-content-center float-md-end">
                 <a class="nav-link fw-bold py-1 px-0" href="{{ path('app_register')}}">Sign up</a>&nbsp;

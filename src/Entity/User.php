@@ -211,6 +211,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'usertonotifie')]
     private Collection $notifications;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $badgemotivator = null;
+
+
+
     public function __construct()
     {
         $this->Articleid = new ArrayCollection();
@@ -1217,6 +1222,18 @@ public function removeNotification(Notification $notification): static
             $notification->setUsertonotifie(null);
         }
     }
+
+    return $this;
+}
+
+public function getBadgemotivator(): ?string
+{
+    return $this->badgemotivator;
+}
+
+public function setBadgemotivator(?string $badgemotivator): static
+{
+    $this->badgemotivator = $badgemotivator;
 
     return $this;
 }

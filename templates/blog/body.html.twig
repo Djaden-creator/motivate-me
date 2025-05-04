@@ -2,7 +2,15 @@
     <div class="container">
         <h4 class="p-3 bg-body-tertiary">Expo des Articles</h4>
         <div class="d-flex p-2" style="gap:10px;">
-            <a href="" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">{{app.user.religion}}</a>
+            <a href="{{ path('all_religion_article') }}" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">{{app.user.religion}} articles</a>
+            {% if app.user.religion == 'Christianisme'  %}
+                <a href="{{ path('app_public_groups') }}" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">more christian groups</a>               
+                {% elseif  app.user.religion == 'Islam' %}
+                    <a href="{{ path('app_public_groups') }}" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">more muslim groups</a>
+                    {% else %}
+                        <a href="{{ path('app_public_groups') }}" class="btn btn-bd-primary" style="font-size: 15px;font-weight:bold;">more groups</a>
+            {% endif %}
+           
         </div>
       <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">        
        {% for article in articles %}
@@ -62,7 +70,7 @@
                       
                      
                     {% else %}
-                    <strong>{{ article.price}} Eur</strong> 
+                    <strong class="text-success">{{ article.price}} Eur</strong> 
                     <small>(<u>{{ article.commandes | length }} 
                         {% if  article.commandes | length > 1 %}
                             exemplaires vendus
@@ -119,11 +127,20 @@
                         {% endif %}    
                         <span class="countsave">{{ article.sauvegardes | length }}</span>	
                         </a>						
-						
-					</span>
+					</span>&nbsp;&nbsp;
+                    {% if article.status == 'free' %}	
+					<span title="download">
+                        <a href="{{ path('app_fichier_pdf',{id:article.id}) }}" style="color:black;text-decoration:none">
+                            <i class="fa-solid fa-download"></i> {{ article.download }}
+                        </a>                       
+                    </span>
+                    {% endif %}
                 </div>
                 <small class="text-body-secondary">{{ article.createAt | ago }}</small>
               </div>
+              {% if article.userposter.badgemotivator == 'motivator' %}
+                <small class="text-secondary">{{article.userposter.username}} <small class="text-success"><i class="fa-solid fa-certificate"></i></small> &nbsp; - {{article.userposter.religion}}</small>
+              {% endif %}
             </div>
           </div>
         </div>

@@ -6,15 +6,12 @@ use Exception;
 use App\Entity\User;
 use App\Entity\Article;
 use App\Entity\Contact;
-use App\Entity\Fichier;
 use App\Entity\Message;
 use App\Entity\Commande;
 use App\Entity\Motivateur;
-use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -91,14 +88,6 @@ final class CommandesController extends AbstractController
                
             }
 
-            // create the response
-            // $response = new Response();
-            // $response->headers->set('Content-Type', 'application/force-download');
-            // $response->headers->set('Content-Disposition', $response->headers->makeDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $getfichier));
-            // $response->headers->set('Content-Transfer-Encoding', 'binary');
-            // $response->headers->set('Content-Length', filesize($path));
-            // $response->setContent(file_get_contents($path));
-            // return $response;
             $response=new BinaryFileResponse($path);
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT,$getfichier);
             return $response;

@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Check;
 use App\Entity\Commentgrouppost;
 use App\Entity\Likepostgroup;
 use App\Entity\Votecomment;
@@ -20,6 +19,7 @@ use App\Entity\Notification;
 use App\Entity\Shareingroup;
 use App\Form\CreategroupType;
 use App\Form\ShareingroupcontentType;
+use App\Repository\AddingroupRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -102,8 +102,9 @@ final class GroupController extends AbstractController
      #[Route('/getagroup/{id}', name: 'app_getagroup')]
      public function getagroup(Request $request,SluggerInterface $slugger, $id,EntityManagerInterface $entityManager,ManagerRegistry $save): Response
      {
- 
+       // session user
        $session=$this->getUser();
+   
        //here all demande not yet threated for the admin
        $demandes=$entityManager->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
  
@@ -130,6 +131,10 @@ final class GroupController extends AbstractController
 
       // the creator email
       $emailcreator=$creatorofgroup->getEmail();
+
+      //the religion of the creator
+      $getreligion_of_creator=$creatorofgroup->getReligion();
+      
 
       //we get the member of a particular group to send them the notification after posting in the group
       $getmembers=$entityManager->getRepository(Addingroup::class)->findby([
@@ -195,7 +200,7 @@ final class GroupController extends AbstractController
                            ->setMessage("New poste was added in your group '{$nameofgroup}' ")
                            ->setIsRead(false)
                            ->setDate(new \DateTime())
-                          
+                          // we set the new post as an entity
                            ->setShareingroupid($contentgroup);
               $em->persist($notification);
             }
@@ -209,9 +214,26 @@ final class GroupController extends AbstractController
         //this code allow us to get all inquiry not responded with the status of null
         $getallinquery=$entityManager->getRepository(Contact::class)->findBy(['status'=>null]);
 
-        //here we get all user in the plateforme include motivator
-        $alluser=$entityManager->getRepository(User::class)->findAll();
+        //here we get all user in the plateforme include motivator which match with your religion only
+        $alluser=$entityManager->getRepository(User::class)->findby([
+            'religion'=>$getreligion_of_creator
+        ]);
 
+        //we are geting  amm new notification of new post in the group where the user did not yet read it
+        $unreadnotification=$entityManager->getRepository(Notification::class)->findBy([
+          'usertonotifie'=>$session,
+          'IsRead'=>"0",
+        ]);
+
+        // if we fund unread notification we set it to read for this user online
+        if($unreadnotification){
+          foreach($unreadnotification as $unread){
+            $unread->setIsRead(true);
+            $entityManager->persist($unread);
+          }
+          $entityManager->flush();
+        }
+       
         // am getting all post of the group
         $allgrouppost=$entityManager->getRepository(Shareingroup::class)->findBy([
           'groupid'=>$mygroups,
@@ -232,6 +254,7 @@ final class GroupController extends AbstractController
              'creator'=>$creatorofgroup,
              'themail'=>$emailcreator,
              'idgroup'=>$getidgroup,
+             'unreadnotification'=>$unreadnotification,
          ]);
      }
  
@@ -352,10 +375,11 @@ final class GroupController extends AbstractController
             
             $groupname=$form->get('groupname')->getData();
             $regles=$form->get('regle')->getData();
+            $religion=$form->get('religion')->getData();
             $group->setDate(new \DateTimeImmutable())
                   ->setUserid($this->getUser());
            
-            if(empty($codehere) && empty($regles)){
+            if(empty($groupname) | empty($regles)| empty($religion)){
                return new JsonResponse([
                    'status' => 'error',
                    'errors' =>'tout le champs doivent etre remplis',
@@ -404,6 +428,32 @@ final class GroupController extends AbstractController
           'groupo'=>$getgroup
         ]);   
    }
+
+    // here a user trying to search the group
+    #[Route('/search_group', name: 'search_group', methods: ['GET'])]
+    public function searchgroup(Request $request,EntityManagerInterface $entityManagerInterface) 
+    {
+      // here we are searching the groups with the specifique religion 
+       $query = $request->query->get('query', '');
+       
+       // we get the user online and his religion
+       $user=$entityManagerInterface->getRepository(User::class)->find($this->getUser());
+       $user_religion=$user->getReligion();
+       //we get the entity fo group
+ 
+       $qb=$entityManagerInterface->createQueryBuilder();
+       $qb->select('g')
+       ->from(Groups::class,'g')
+       ->where('g.religion = :religion')
+       ->andWhere('g.groupname LIKE :query')
+       ->setParameter('query','%'.$query.'%')
+       ->setParameter('religion',$user_religion);
+       $results=$qb->getQuery()->getResult();
+         
+         return $this->render('group/group_ajax.html.twig',[
+           'all_groups'=>$results,
+         ]);
+    }
 
    // here we delete the post group
    #[Route('/deletepostgroup/{id}', name: 'app_deletepostgroup')]
@@ -682,9 +732,50 @@ final class GroupController extends AbstractController
                   ],200); 
    }
 
+
+   //here the user will seach or find a group to adhere
+    // here we are liking a post group
+    #[Route('/public_groups', name: 'app_public_groups')]
+    public function publicgroups(EntityManagerInterface $entityManagerInterface,ManagerRegistry $save) 
+    {
+      $users=$entityManagerInterface->getRepository(User::class)->find($this->getUser());
+        $user_religion=$users->getReligion();
+      
+        $all_group_with_my_religion=$entityManagerInterface->getRepository(Groups::class)->findBy([
+          'religion'=>$user_religion
+        ]);
+         // this code is about to fetch all demande of user not yet threated by the admin new demande
+         $demandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['decision'=>'traitement encours...']);
+
+         //here we are getting a user demande for a particular user
+         $userdemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser()]);
+ 
+         //this code allow us to get all inquiry not responded with the status of null
+         $getallinquery=$entityManagerInterface->getRepository(Contact::class)->findBy(['status'=>null]);
+ 
+         // here we are geting if the user got a new unread message in the nav bar
+         $getunread=$entityManagerInterface->getRepository(Message::class)->findBy([
+         'usertwo'=>$this->getUser(),
+         'status'=>"unread",
+         ]);
+         // this code is about if the demande of user is accepted he has to see the add article button etc... to add article
+         $validedemandes=$entityManagerInterface->getRepository(Motivateur::class)->findby(['user'=>$this->getUser(),'decision'=>'acceptée']);
+
+         return $this->render('group/findgroups.html.twig', [
+          'users'=>$users,
+        
+          'demandes'=>$demandes,
+          'validedemandes'=>$validedemandes,
+          'unreadmessage'=> $getunread,
+          'getallinquery'=>$getallinquery,
+          'all_groups'=>$all_group_with_my_religion
+        
+      ]);
+    }
+ 
    //here we comment a post in a particular group
    #[Route('/commentgrouppost/{id}', name: 'app_commentgrouppost')]
-   public function commentgrouppost($id,Request $request,CommentgrouppostRepository $commentgrouppostRepository,EntityManagerInterface $entityManagerInterface,LikepostgroupRepository $likepostgroupRepository, ManagerRegistry $save) 
+   public function commentgrouppost($id,Request $request,EntityManagerInterface $entityManagerInterface,ManagerRegistry $save) 
    {
       $getpost=$entityManagerInterface->getRepository(Shareingroup::class)->find($id);
        
@@ -813,6 +904,44 @@ final class GroupController extends AbstractController
                    'commentpostingroupid'=>$getcomment
             ],200)
                   ],200); 
+   
+     //things are comming soon more functionalities and methodes
+   }
+
+   // here the normal user trying to add himself in a particular group
+   // the admin is votting or choosing the comment as a good idea
+   #[Route('/addmyself_in_agroup/{id}', name: 'app_addmyself_in_agroup')]
+   public function addmyself($id,EntityManagerInterface $entityManager,ManagerRegistry $save,AddingroupRepository $addingroup_repository): Response
+   {
+
+    if(!$this->getUser()){
+      return $this->json(['code'=>415,'message'=>'not connected'],403);
+  }
+  $group=$entityManager->getRepository(Groups::class)->find($id);
+  $idgroup=$group->getId();
+  
+  if($group->isDemande($this->getUser()))
+  {
+     $addingroup=$addingroup_repository->findOneBy([
+         'groupid'=>$group,
+         'newmember'=>$this->getUser()
+     ]);
+     $entityManager->remove($addingroup);
+     $entityManager->flush();
+
+    return $this->render('group/askto_enter.html.twig',['id'=>$idgroup]);
+  }
+
+  
+    $addingroup = new Addingroup();
+    $addingroup->setAddedby($this->getUser())
+                  ->setNewmember($this->getUser())
+                  ->setGroupid($group)
+                  ->setDate(new \DateTime());
+                $em=$save->getManager();
+                $em->persist($addingroup);
+                $em->flush();
+                return $this->render('group/inthe_group.html.twig',['id'=>$idgroup]);
    
      //things are comming soon more functionalities and methodes
    }

@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 	{% if app.user %}
-	{% if app.user.religion == 'none' %}
-		{{ include('setyour_religion/index.html.twig') }}
-	{% else %}
-	 {# the view here  #}
-	 <main>
-	 {{ include('blog/banner.html.twig')}}
-     {{ include('blog/body.html.twig')}}
-       
-    </main>
-	{% endif %}
+		{% if app.user.religion == 'none' %}
+			{{ include('setyour_religion/index.html.twig') }}
+		{% else %}
+		{# the view here  #}
+		<main>
+		{{ include('blog/banner.html.twig')}}
+		{{ include('blog/body.html.twig')}}
+		
+		</main>
+		{% endif %}
 	{% else %}
 
 		<main>
@@ -33,6 +33,7 @@
 	 
 	<script> 
 		$(document).ready(function(){
+			// here we like article and unlike it
 			$(document).on('click','.allclicks',function(event){
 				event.preventDefault();
 	
@@ -93,11 +94,12 @@
 	
 			 })
 
+			 //this code is used to follow the user and to unfollow the user
 			 $(document).on('click','.followclick',function(e){
 				e.preventDefault();
 				// url that we want to use
 				let urls=this.href;
-				console.log(urls);
+				
 				// this function is to extract the id from  the urls
 				function getidfromurl(urls){
 					let segment =urls.split("/");

@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use Exception;
 use App\Entity\User;
-use App\Entity\Abonner;
 use App\Entity\Article;
 use App\Entity\Contact;
 use App\Entity\Message;
@@ -12,16 +11,12 @@ use App\Entity\Religion;
 use App\Entity\Motivateur;
 use App\Entity\Articlelike;
 use App\Entity\Notification;
-use App\Repository\UserRepository;
-use App\Repository\AbonnerRepository;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ArticlelikeRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Bridge\Doctrine\ArgumentResolver\EntityValueResolver;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BlogController extends AbstractController
@@ -70,8 +65,8 @@ class BlogController extends AbstractController
       {
         $user = $entityManager->getRepository(User::class)->find($session);
         $testuser=$user->getReligion();
-        $articleall=$entityManager->getRepository(Article::class);
-        $articles=$articleall->findby(['category'=>$testuser]);
+        $articles=$entityManager->getRepository(Article::class)->findby(['category'=>$testuser],['id'=>'DESC'],15);
+        shuffle($articles);
       }else {
         $articleall=$entityManager->getRepository(Article::class);
         $articles=$articleall->findAll();
